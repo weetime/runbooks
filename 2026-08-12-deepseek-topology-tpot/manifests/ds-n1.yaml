@@ -1,0 +1,91 @@
+# Phase 0 / G2: multi-node long-context probe. Node ds-n1 @ <NODE_B_PARAM_IP>.
+# Official A2 multi-node mechanism: DP spans nodes, TP stays node-local
+# (launch_online_dp.py slices ASCEND_RT_VISIBLE_DEVICES within a node).
+# => a single request lives in ONE DP replica = one node = 8 cards.
+# => long context must come from DCP sharding inside the node, not from adding nodes.
+# Pinned to .15 (<NODE_A_HOSTNAME>) because the 293 GiB weights already live there.
+#
+# Device access follows the convention proven on this cluster (pd-bench/pd-g2 and the
+# 2026-08-07 MiniMax bring-up): bypass HAMi with `hami.io/webhook: ignore` +
+# default-scheduler, mount /dev/davinci* directly as CharDevice hostPaths.
+# Do NOT use nodeName+huawei.com/Ascend910B4-1 (-> "no binding pod found") and do NOT
+# use schedulerName: hami-scheduler (-> "resource pool default not found").
+#
+# Container idles on purpose: G1 must read the startup log, so the engine is launched by
+# hand. Baking `vllm serve` in turns any failure into CrashLoopBackOff with the log gone.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ds-n1
+  namespace: default
+  labels:
+    app: ds-n1
+    hami.io/webhook: "ignore"
+    exp: "2026-08-07-deepseek-v4-flash-pd-vs-2x-longctx-agent-910b4"
+  annotations:
+    # HAMi 记账:没有 resource-pool 注解会报 "resource pool default not found"
+    # (本集群资源池是租户维度:gen-studio-* / ai-for-deployer-*,没有 default)
+    hami.io/resource-pool: gen-studio-dedicated
+    rise.io/scheduler: hami
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: <NODE_B_HOSTNAME>   # <NODE_B_PARAM_IP>
+  schedulerName: hami-scheduler
+  restartPolicy: Never
+  hostNetwork: true
+  imagePullSecrets:
+    - name: <YOUR_REGISTRY_PULL_SECRET>
+  containers:
+    - name: vllm
+      image: quay.io/ascend/vllm-ascend:DeepSeekV4-flash-0731
+      imagePullPolicy: IfNotPresent
+      command: ["sleep", "infinity"]
+      securityContext:
+        privileged: true
+        runAsUser: 0
+      resources:
+        # 走 HAMi 申请是为了让调度器记账、避免别人抢同一批卡。
+        # 但实测 HAMi 在本集群"只调度不注入设备"(容器里 ls /dev/davinci* 为空),
+        # 所以下面的 CharDevice hostPath 挂载仍然必需 —— 两者都要。
+        requests: { cpu: "32", memory: "120Gi", huawei.com/Ascend910B4-1: "8" }
+        limits:   { cpu: "160", memory: "700Gi", huawei.com/Ascend910B4-1: "8" }
+      volumeMounts:
+        - { name: dav0, mountPath: /dev/davinci0 }
+        - { name: dav1, mountPath: /dev/davinci1 }
+        - { name: dav2, mountPath: /dev/davinci2 }
+        - { name: dav3, mountPath: /dev/davinci3 }
+        - { name: dav4, mountPath: /dev/davinci4 }
+        - { name: dav5, mountPath: /dev/davinci5 }
+        - { name: dav6, mountPath: /dev/davinci6 }
+        - { name: dav7, mountPath: /dev/davinci7 }
+        - { name: davmgr, mountPath: /dev/davinci_manager }
+        - { name: devmm, mountPath: /dev/devmm_svm }
+        - { name: hdc, mountPath: /dev/hisi_hdc }
+        - { name: driver, mountPath: /usr/local/Ascend/driver }
+        - { name: dcmi, mountPath: /usr/local/dcmi }
+        - { name: npusmi, mountPath: /usr/local/bin/npu-smi }
+        - { name: ascendinfo, mountPath: /etc/ascend_install.info }
+        - { name: hccntool, mountPath: /usr/local/Ascend/driver/tools/hccn_tool }
+        - { name: models, mountPath: /models, readOnly: true }
+        - { name: dshm, mountPath: /dev/shm }
+        - { name: localtime, mountPath: /etc/localtime }
+  volumes:
+    - { name: dav0, hostPath: { path: /dev/davinci0, type: CharDevice } }
+    - { name: dav1, hostPath: { path: /dev/davinci1, type: CharDevice } }
+    - { name: dav2, hostPath: { path: /dev/davinci2, type: CharDevice } }
+    - { name: dav3, hostPath: { path: /dev/davinci3, type: CharDevice } }
+    - { name: dav4, hostPath: { path: /dev/davinci4, type: CharDevice } }
+    - { name: dav5, hostPath: { path: /dev/davinci5, type: CharDevice } }
+    - { name: dav6, hostPath: { path: /dev/davinci6, type: CharDevice } }
+    - { name: dav7, hostPath: { path: /dev/davinci7, type: CharDevice } }
+    - { name: davmgr, hostPath: { path: /dev/davinci_manager, type: CharDevice } }
+    - { name: devmm, hostPath: { path: /dev/devmm_svm, type: CharDevice } }
+    - { name: hdc, hostPath: { path: /dev/hisi_hdc, type: CharDevice } }
+    - { name: driver, hostPath: { path: /usr/local/Ascend/driver } }
+    - { name: dcmi, hostPath: { path: /usr/local/dcmi } }
+    - { name: npusmi, hostPath: { path: /usr/local/bin/npu-smi, type: File } }
+    - { name: ascendinfo, hostPath: { path: /etc/ascend_install.info, type: File } }
+    - { name: hccntool, hostPath: { path: /usr/local/Ascend/driver/tools/hccn_tool, type: File } }
+    - { name: models, hostPath: { path: /data/share/models, type: Directory } }
+    - { name: localtime, hostPath: { path: /etc/localtime, type: File } }
+    - { name: dshm, emptyDir: { medium: Memory, sizeLimit: 64Gi } }

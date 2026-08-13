@@ -286,6 +286,35 @@ def cap(rows, ttft_s, tpot_ms):
 
 ---
 
+## 5.5 配方对比:哪些偏离官方值得改
+
+对照 vLLM-Ascend 官方 A2 配方,我们的配方有四处偏离。固定 PD 拓扑、并发 32/128、每组跨服务重启 2–3 次实测:
+
+| 偏离项 | 我们 | 官方 | 并发 128 实测 | 结论 |
+|---|---|---|---|---|
+| `--block-size` | 32 | **128** | 吞吐 +4.5% · TTFT p50 **−28.4%** · TPOT p99 **+7.1%** | **按卡的指标定**,见下 |
+| `num_speculative_tokens` | 7 | mtp/1 | n=5 时吞吐 **−61.1%**、TPOT **+609%** | 保持关闭投机 |
+| `method` | dspark | **mtp** | **引擎无法启动**(3/3) | 这份权重+镜像用不了 |
+| prefix caching | 默认开 | **显式关** | 三项全在噪声内 | 改不改都行 |
+
+**block-size 是唯一有实质收益的一条,而且是权衡不是改进**:该模型 `sliding_window=128`,block 取 128 时一个滑窗正好一个 block,prefill 的 KV 分配跨度从 4 个 block 降到 1 个,首字延迟降近三成;代价是 223 token 的短请求在 128 的 block 里有约 13% 内部碎片,尾部吐字慢 7.1%。卡 TTFT 就改,卡 TPOT(如常规 Server 档 ≤80ms)就别改——85.6ms 会直接出局。
+
+**`dspark_block_size` ≠ `num_speculative_tokens`。** 权重 `config.json` 里有 `dspark_block_size = 5`,把 `num_speculative_tokens` 对齐到它**反而更差**(n=5 比 n=7 差)。这两个参数很可能不是同一语义,不要照着对齐。
+
+**官方的 mtp 配方套不到这份权重上,而且卡在比模型加载更早的地方。** 权重里确实有 `mtp.0.*` 共 7022 个张量、`num_nextn_predict_layers=1` 也在,但八个 worker 会同时停在 CANN 图引擎的算子库初始化:
+
+```
+[SubGraphOpt][PreCompileOp][Init] Initialize op store adapter failed, OpsStoreName[tbe-custom]
+[FusionMngr][Init] Op store adapter manager init failed
+GELib::InnerInitialize failed
+[Initialize][Ge]GEInitialize failed. ge result = 4294967295
+[Set][Options]OpCompileProcessor init failed!
+```
+
+这不是 vLLM 的「方法不支持」拒绝,是算子编译层失败。它确实是 mtp 特有的(同批容器内 mtp 失败 3/3、其余配置成功 8/8),但 `ge result = 4294967295` 是笼统失败码,**没有指名缺哪个算子**——要查清需 `export ASCEND_GLOBAL_LOG_LEVEL=1` 开 CANN 详细日志重跑。
+
+**结论:投机方法由权重与镜像共同决定**,不只是权重。官方 mtp 配方对应的 `vllm-ascend/DeepSeek-V4-Flash-w8a8-mtp` 大概率也配套另一份镜像。
+
 ## 6. 噪声底
 
 任何差异判定之前先做这个,否则无法区分「真差异」与「抖动」。
@@ -301,7 +330,17 @@ def cap(rows, ttft_s, tpot_ms):
 - **分档标定**。实测同一指标跨档最多差 21.8 倍,不能全表共用一个噪声底。
 - **分指标标定**。并发 64 上 TTFT p99 的噪声是 TTFT p50 的 145 倍,分布类指标基本不可精读。
 
-> 本轮的噪声底脚本里硬编码了 `--speculative-config`,因此只对**投机开启**的配置成立。要给投机关闭的配置下差异结论,需要把这行去掉重标一遍。
+> 本仓库附的 `noise_floor.sh` 里硬编码了 `--speculative-config`,只对**投机开启**的配置成立。要给投机关闭的配置下结论,必须把这行去掉重标。
+
+投机关闭配置的实测噪声带(PD 拓扑,跨服务重启 n=3):
+
+| 指标 | 并发 32 | 并发 128 |
+|---|---|---|
+| 吞吐 | **19.48%** | 3.35% |
+| TPOT p99 | 7.24% | 2.38% |
+| TTFT p50 | 31.35% | 15.25% |
+
+**并发 32 那档分辨不出任何小于两成的差异**,配方对比一律用并发 128 判定。开启投机时方差更大:同配置两次冷启动在并发 32 上测到 328.6 与 607.4,极差 84.9%,是关闭投机的 4.4 倍——生产上这意味着同一份配置两次启动可能落在差 1.8 倍的性能点上。
 
 ---
 
@@ -332,6 +371,8 @@ def cap(rows, ttft_s, tpot_ms):
 | `pkill -f <pattern>` 返回 255 | 模式匹配到了 ssh 命令自身 | 用 `[V]LLM` 这类写法,或按 PID kill |
 | 跨机实例起不来、HCCL 超时 | 少了 `HCCL_IF_IP` / `HCCL_SOCKET_IFNAME` | 见第 2 节的环境变量块 |
 | Pod 一直 Pending | HAMi webhook 与手动挂载冲突 | `hami.io/webhook: "ignore"` + 默认调度器 |
+| `kubectl cp` 静默失败,引擎起不来却查不出原因 | pod 还在 ContainerCreating 就开跑,cp 的错误被 `>/dev/null` 吞掉 | 开跑前等 `containerStatuses[*].ready`;cp 后加 `test -s` 二次确认 |
+| 引擎起不来但**报错丢了** | 失败时只 grep 几种错误模式写日志,下一轮又无条件 `rm` 掉引擎日志 | 失败时把**整份**引擎日志拷回宿主机归档,不要只 grep |
 
 ---
 

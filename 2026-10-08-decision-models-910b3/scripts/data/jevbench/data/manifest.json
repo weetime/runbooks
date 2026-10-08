@@ -1,0 +1,126 @@
+{
+  "benchmark": "JevBench public easy/standard/hard",
+  "upstream_commit": "bb05a335bc809e61b20c0f745d25499a82b326fc",
+  "upstream_url": "https://github.com/fstandhartinger/jevbench",
+  "cases": 231,
+  "decisions": 231,
+  "tiers": {
+    "easy": 48,
+    "standard": 72,
+    "hard": 111
+  },
+  "question_types": {
+    "choice": 139,
+    "noul": 74,
+    "score": 18
+  },
+  "source_files": [
+    {
+      "path": "upstream/datasets/public/easy.jsonl",
+      "sha256": "231df3c2c8e88a1a8c137ebe85de96ba70fabd330849098ac7b3c52c70b7172b",
+      "cases": 48,
+      "canonical_sha256": "3cbd0e951fa8059741955ef2bd3273b0bb60aecae8f4a68b89872f55f7376b3d"
+    },
+    {
+      "path": "upstream/datasets/public/original.jsonl",
+      "sha256": "5c2414edb3006b8bfcb70fda433f0f9ca015759433849f8d3104328a1f7c4180",
+      "cases": 72,
+      "canonical_sha256": "914276022fa5f0ea70e4231f2af98e68c67b274b61bea8c440b33890401cd2f9"
+    },
+    {
+      "path": "upstream/datasets/public/hard.jsonl",
+      "sha256": "89e9e6becb33ed88c1de7d42dcc87531b2fb64cfaef4e1986faf7c37b3f80ebb",
+      "cases": 111,
+      "canonical_sha256": "e816e106f562dec75a8da12e69b75e957a4bbd9f6300f1145fc71837327a3c61"
+    }
+  ],
+  "cases_sha256": "8f11930d3ca51b8d1386ad2ae44f28b0e814b498558ed16d9e1078c83cb26a6b",
+  "models": [
+    "decider",
+    "decider-12b",
+    "decider-chat-gemma4-31b",
+    "laya-typed",
+    "jev-1.13.0",
+    "decider-0.8b",
+    "decider-2b",
+    "decider-chat-qwen3.6-27b",
+    "decider-35b-a3b",
+    "decider-2b-vision",
+    "laya-en",
+    "laya-ml"
+  ],
+  "repeats": 1,
+  "warmups": 3,
+  "warmups_counted": false,
+  "sample_order": "Python random.Random(13).shuffle, same across all models",
+  "request_builder": "pinned upstream TypeSafeAdapter.build_request without transport-only model field",
+  "scorer": "pinned upstream score_task: exact labels; lexicographic ties; rounding tolerance0.02, strict0.001; Score argmax",
+  "failure_rule": "Failures remain denominator; no retries. Stop on401/403/429 or3 consecutive infrastructure failures; incomplete is never full score.",
+  "calibration": "10-bin top-label ECE and hard-label onehot multiclass Brier on valid distributions only; separate from old soft-teacher Brier",
+  "diagnostic_threshold": 0.8,
+  "diagnostic_definition": "retained predictions have max normalized probability >=0.8; report coverage, accepted accuracy, high-confidence wrong counts",
+  "limitations": [
+    "Public split only, not sealed tasks/current leaderboard composite",
+    "Hard items model-authored and cross-model-reviewed; not human business gold",
+    "Public training/selection overlap allowed by benchmark; no claim of unseen generalization",
+    "Single pass; no calibration fitting on test",
+    "NPU local inference and Mac HTTPS network timing not comparable; timing diagnostic only"
+  ],
+  "runtime": "reuse original frozen weights, SDK versions/defaults, NPU adapters; no weight or model config changes",
+  "devices": {
+    "decider-0.8b": "npu:2",
+    "decider-2b": "npu:3",
+    "decider-2b-vision": "npu:4",
+    "laya-en": "npu:5",
+    "laya-ml": "npu:6",
+    "decider-chat-qwen3.6-27b": [
+      "npu:0",
+      "npu:1"
+    ],
+    "decider-35b-a3b": [
+      "npu:0",
+      "npu:1"
+    ]
+  },
+  "runner_sha256": "a499924ba2c79261b2051003191d71d71d5785d83944f8a0a21aac2111c3e9c0",
+  "upstream_code_hashes": {
+    "upstream/jevbench/metrics.py": "4038c8423ad1cf28601afb6babe777b71f08e379b9ca125b09b52c0ac7d60515",
+    "upstream/jevbench/runner.py": "15dd3ab9b3c111f3f4f47b9d9b657fa87d0f0d52d208c79c6ecf64cbf88cba7d",
+    "upstream/jevbench/tasks.py": "b9c2f8ba9a7301519656d79d47c31b8ab0542a5545498ce3b339d5e93b976812",
+    "upstream/jevbench/budget.py": "f0a08b4884b4ff6f43e679c59b3f0bca8044bdb8e7b6eb5c16ff407e75b0bb15",
+    "upstream/jevbench/scoring.py": "6aa17d212ea20a3eeb6876149367842e8462c11dcb54d73df062fb406368331e",
+    "upstream/jevbench/composite_v13.py": "66562dffb9d6f70bcafe5a0d7a823e0f48195aa6cdfb12dfc7d32f064b433d33",
+    "upstream/jevbench/__init__.py": "64c28dc1534502c429a3b67eee79ab7909fab995b7d116c9b089f0f3bb8652f7",
+    "upstream/jevbench/composite_v12.py": "2c06af8f4c1ea1ab91756de42677daddd8a4d47f11e62c9b3fab06e520ff93cc",
+    "upstream/jevbench/summarize.py": "aa5f24da407d004cd80bad1cd957b6987aba152591084c096d1de51dd9775cbe",
+    "upstream/jevbench/cli.py": "303c5de571c8532cd7493af0db4ffabaf2ebd3449d9bb1233535ba528892ffe0",
+    "upstream/jevbench/composite_v14.py": "33177d06eab9f78667972ec3b20997344f70a78e16b05326453a2c31200cac79",
+    "upstream/jevbench/composite.py": "13be863cbbf637597c43129f08f7ba1a41ea93797fd4ac9fe8dbe3d2d978ba7d",
+    "upstream/jevbench/adapters/sg_system_one.py": "3688070e4aa93f11d87c69915b69271d71f51231b45885be4cf5c7fca329c516",
+    "upstream/jevbench/adapters/reranker.py": "25bddfd98b07a3b52d2f68d82e6df738d5ca630e92c84af877deebb81f2386e9",
+    "upstream/jevbench/adapters/classifier_dev.py": "547e2dda68990a49ced7bc373d9a5e494fd793c194d4bd4fe98ab00c2d8312de",
+    "upstream/jevbench/adapters/certo_local.py": "b112f302da1b3726590469bf2e925aa8374a5ccbeeeca81f0c155b7c8e4686d8",
+    "upstream/jevbench/adapters/qwen_flash_linear.py": "3dd413ff4f4b8356a7a23a1714dc5d45f96351095ae767cfefc89a3d8ed027dd",
+    "upstream/jevbench/adapters/__init__.py": "ac77484db9bb2a7ece87a6176963fb28ceedb217a4daead4a8e542dfcf1e8693",
+    "upstream/jevbench/adapters/remote_inproc.py": "c2ef47cb5bfc8325aee56a3f8038e23b2a197fbbc18d5bcaa90185c4567d3d8c",
+    "upstream/jevbench/adapters/typesafe.py": "780f879416479b645ee519bb85d0cce722d0df7aa2b41a029de92b76f2593e51",
+    "upstream/jevbench/adapters/so1_decider.py": "3e44ad0dad03ee78bf2a876a54b6e0b756eec2100d671b08cf68ce3528db7913",
+    "upstream/jevbench/adapters/openai_compat.py": "5f0450ef2db2743db05bdf756cd50db951654533e33cdfd23002709ca485c95e",
+    "upstream/jevbench/adapters/systemone_list.py": "9837fc6d0ec56acbffb5ebbd94c98a165c7add55be0294ac6c9fa54818418740",
+    "upstream/jevbench/adapters/djev.py": "4e31997cb1a3f9308eed5d24a7ad59bf114688b55c9fbc725081ac24a2d350d3",
+    "upstream/jevbench/adapters/verdict_local.py": "2ad82354224687f434042a0bdbc1f0d713ea73f0d76040912441c0dc5a66e3e7",
+    "upstream/jevbench/adapters/needle_local.py": "2e99720a58c050af8c052932091ca3746b3d085a17e0508b5615c360e09bd854",
+    "upstream/jevbench/adapters/base.py": "fdddc42e4f71d774096f806c4ee844cc4c4b428385f01a017cb64153d7c089f4",
+    "upstream/jevbench/adapters/gradio_space.py": "5c6748212c58fec6bb8728434aa0772de9e117faea4d651c839a3a6e65892c79",
+    "upstream/jevbench/adapters/paw_local.py": "c8743f8c4da7513bfb0120b402425b8fd1674460ff0374e12309b576b91f0156",
+    "upstream/jevbench/adapters/smalljev_local.py": "4a7d0b6cf85854d9fbc98fc4b738e7c03dcda0ef38cf7ccb4735791b61cff3f3",
+    "upstream/jevbench/adapters/gliner2_local.py": "c7cdd480b941b6b39cf3e5deb761e585858bff9379662a5ea2bc09a06b9c553c",
+    "upstream/jevbench/adapters/local_openjev.py": "9059a076e421c1aee58de9143e6fb4b8d2785d31aa7f33548466e784b78a1f93",
+    "upstream/jevbench/adapters/semif_direct.py": "dbb46432e6be3f225f12a28363e44f717ec82fa9ada8dc4cf0fcf45ed2a2f17e",
+    "upstream/jevbench/adapters/laya_local.py": "7bb75b8e81fd423b0914a0c3cdf74108231ad5ce24f26f38714599f5cdcd7dec"
+  },
+  "cohort": "Additional7 local versions after representative5 results",
+  "reason": "chat31B hard94/111 vs Jev78/111; expand sizes as proposed. Same frozen231 questions, no prompt/config/temperature change. Only extend existing Laya truncation audit to EN/ML.",
+  "public_reproduction": true,
+  "cohort_note": "Public reproduction manifest combines12 models; historical experiment has frozen5+7 cohorts."
+}

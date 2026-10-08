@@ -1,6 +1,6 @@
 # Jev、decider 与 Laya：多任务决策实测
 
-复现新增四类工作流、MASSIVE中文子集、XNLI中文子集。此目录仅公开代码与公开题库，不包含集群地址、账号凭据、私有镜像或本次原始模型响应。完整历史响应保存在作者文章素材中。
+复现四类工作流、MASSIVE中文子集、XNLI中文子集与JevBench公开231题。此目录仅公开代码与公开题库，不包含集群地址、账号凭据、私有镜像或本次原始模型响应。完整历史响应保存在作者文章素材中。
 
 ## 1. 硬件与镜像
 
@@ -8,7 +8,7 @@
 
 ## 2. 测试工具
 
-`run.py`直接调用SDK或HTTPS，`analyze.py`离线审计/计分。`loader.py`为NPU适配，`family_models.py`与`npu_moe.py`为双卡/视觉扩展。此公开副本仅将loader的扩展搜索目录调整为同目录；实验冻结版与运行哈希保存在原始文章素材，不能用此副本冒充原始运行文件。
+`run.py`直接调用SDK或HTTPS，`analyze.py`离线审计/计分。`loader.py`为NPU适配，`family_models.py`与`npu_moe.py`为双卡/视觉扩展。此公开副本将loader的扩展搜索目录调整为同目录，并在run/analyze加入`--benchmark jevbench`分支；实验冻结版与运行哈希保存在原始文章素材，不能用此副本冒充原始运行文件。
 
 在已有框架依赖的容器内：
 
@@ -28,6 +28,16 @@ venv/bin/python -m pip install --no-deps decider-ai==1.9.0 laya==0.4.0
 - [MASSIVE转换版](https://huggingface.co/datasets/mteb/amazon_massive_intent/tree/940fd47a81eaa7f2cc7b129674d945d618ac38c2)：zh-CN test前300条，参考意图加19干扰项，seed13，不是完整60分类。本次固定test有59类，前300出现30类。原数据许可CC BY 4.0，来源为Amazon MASSIVE。
 - [XNLI](https://huggingface.co/datasets/facebook/xnli/tree/b8dd5d7af51114dbda02c0e3f6133f332186418e)：zh/test前300条，三类各100。数据来源/许可以所附数据卡为准。
 - 请求构造沿用固定[Laya评测脚本](https://github.com/NandhaKishorM/laya/blob/3cf26cbcb18725dbc2d127bb8bb2c4c43243ae63/research/scripts/laya_benchmark_colab.ipynb)。公开源文件保持原版权与许可，不将其重新许可为自研数据。
+
+JevBench额外冻结231个公开英文决策题：easy48、standard72、hard111；139 Choice、74 Noul、18 Score。`scripts/data/jevbench/data/`包含无gold的request和离线task；runner只发送request。SHA为`8f11930d3ca51b8d1386ad2ae44f28b0e814b498558ed16d9e1078c83cb26a6b`。来源为第三方JevBench维护者，不是TypeSafe官方评测；hard为模型编写、交叉审核的合成参考，公开部分允许训练或选型接触。
+
+上游代码/原始公开数据不重复打包，需按固定commit检出至以下目录，runner与analyze核对源文件哈希。原版权与MIT/THIRD-PARTY说明留在该checkout：
+
+```bash
+cd /workspace/decision-models-20261008/multitask-tests
+git clone https://github.com/fstandhartinger/jevbench.git data/jevbench/upstream
+git -C data/jevbench/upstream checkout bb05a335bc809e61b20c0f745d25499a82b326fc
+```
 
 ## 4. 起服务
 
@@ -61,6 +71,17 @@ python run.py --model jev-1.13.0 --output results/jev-1.13.0
 
 本地或API每模型完整运行1000请求/2600判断；smoke只预热不计分。本地设备不可共享给同时运行的另一个模型；双卡配置使用npu:0和npu:1，需要预先下载相应固定权重，这份最小下载示例仅准备4B/Laya。HTTP失败保留为error，不重试筛选。raw.jsonl与metadata.json保存在输出目录。
 
+同一个公开runner运行JevBench，每模型三档各预热一次，再固定seed13顺序执行231请求；输出目录不同于原多任务测试：
+
+```bash
+../venv/bin/python run.py --benchmark jevbench --model decider --device npu:0 --smoke --output data/jevbench/results/decider-smoke
+../venv/bin/python run.py --benchmark jevbench --model decider --device npu:0 --output data/jevbench/results/decider
+# Jev在客户端使用相同冻结request，密钥仍来自环境
+python run.py --benchmark jevbench --model jev-1.13.0 --output data/jevbench/results/jev-1.13.0
+```
+
+公开复现manifest统一列出12版本；历史实验先跑5代表版本、看到差异后再扩展7本地版本，两个原始manifest及哈希保存在文章素材中。公开版SHA因合并入口发生变化，不可直接用公开analyze审计旧历史响应。
+
 ## 6. 判据与复算
 
 完整12版本结果齐备时，在multitask-tests目录：
@@ -75,6 +96,18 @@ python analyze.py
 
 自测记录：2026-10-09，在原B3环境验证4B及LayaTyped最小调用，各返回5个问题且实际设备npu:0；离线analyze对原始12版本记录逐项复算与冻结summary一致。公开打包版runner的4B和LayaTyped各三套任务预热在同一NPU环境通过，不作为新增评测成绩。不会重新运行完整12000请求来验文档。
 
+JevBench离线复算读取`data/jevbench/results/`的固定12模型目录；只复跑部分时明确加`--partial`：
+
+```bash
+python analyze.py --benchmark jevbench --partial
+# 全部12版本齐备后，去掉 --partial 才能得到完整报告
+python analyze.py --benchmark jevbench
+```
+
+JevBench沿用固定上游score_task：标签精确匹配、Score取最大概率档位、平局按字典序；严格容差0.001内不修改概率质量，宽容差0.02内才归一化，超出无效。失败计错，不重试；401/403/429或连续3次基础设施错误则停止，不把不完整批次写成全量。硬标签Brier与10分箱ECE使用官方接受的分布；≥0.8诊断额外归一化微小残差后统计保留数和其中错误数，未在测试集拟合阈值。这些指标不可与原工作流软教师Brier直接比较。本次未运行sealed、judge、router保留题及速度/成本综合榜分。
+
+公开合并入口自测：2026-10-09，B3上4B与Laya Typed分别通过原多任务和JevBench的三次预热，共12次未计分诊断调用；离线入口核对固定上游哈希通过。
+
 ## 7. 已知坑
 
-NPU兼容需要关闭MHA fastpath和显式SDPA mask，不启用CUDA Graph/FLA。四B单卡加载不可直接推广为27/31/35B双卡配方。默认候选48token限制及英文模型状态截断仍可能影响结果。NVFP4微调31B/35B预检不支持、GGUF未测，均不计入成绩。API网络耗时不等于纯推理时延。尚未覆盖JevBench、Bespoke完整套件、Banking77、CLINC、Mind2Web、完整多语MASSIVE/XNLI及TypeSafe官方完整工作流执行。
+NPU兼容需要关闭MHA fastpath和显式SDPA mask，不启用CUDA Graph/FLA。四B单卡加载不可直接推广为27/31/35B双卡配方。默认候选48token限制及英文模型状态截断仍可能影响结果。NVFP4微调31B/35B预检不支持、GGUF未测，均不计入成绩。API网络耗时不等于纯推理时延。尚未覆盖JevBench保留集与完整榜单、Bespoke完整套件、Banking77、CLINC、Mind2Web、完整多语MASSIVE/XNLI及TypeSafe官方完整工作流执行。

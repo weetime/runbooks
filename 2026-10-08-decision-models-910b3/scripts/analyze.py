@@ -1,3 +1,64 @@
+def analyze_jevbench():
+    """Audit frozen JevBench artifacts and recompute scores; never calls models."""
+    import argparse,collections,hashlib,json,math,sys
+    from pathlib import Path
+    R=Path(__file__).resolve().parent/'data/jevbench';sys.path.insert(0,str(R/'upstream'))
+    from jevbench.tasks import Task
+    from jevbench.scoring import score_task
+    from jevbench.metrics import brier_score,ece_top_label,ordinal_mae
+    sha=lambda b:hashlib.sha256(b).hexdigest()
+    def stats(rows):
+     valid=[x for x in rows if x['valid']];conf=[(max(x['probs'].values()),x['correct']) for x in valid]
+     accepted=[x for x in valid if x['diagnostic_normalized_confidence']>=.8]
+     incorrect=[x for x in valid if not x['correct']]
+     return {'n':len(rows),'correct':sum(x['correct'] for x in rows),'accuracy':sum(x['correct'] for x in rows)/len(rows) if rows else None,'valid':len(valid),'invalid':len(rows)-len(valid),'brier_hard_label':sum(x['brier'] for x in valid)/len(valid) if valid else None,'ece_10':ece_top_label(conf,10)['ece'] if valid else None,'score_mae':ordinal_mae([(x['expected_level'],x['ordinal_ev']) for x in valid if 'ordinal_ev' in x]),'confidence_ge_08':{'accepted':len(accepted),'coverage':len(accepted)/len(rows) if rows else None,'correct':sum(x['correct'] for x in accepted),'wrong':sum(not x['correct'] for x in accepted),'accuracy':sum(x['correct'] for x in accepted)/len(accepted) if accepted else None},'wrong_mean_confidence':sum(x['diagnostic_normalized_confidence'] for x in incorrect)/len(incorrect) if incorrect else None,'state_truncated':sum(x.get('diagnostics',{}).get('state_truncated',False) for x in rows),'instruction_truncated':sum(x.get('diagnostics',{}).get('instruction_truncated',False) for x in rows),'options_over_48':sum(x.get('diagnostics',{}).get('options_over_48',0) for x in rows)}
+    def main():
+     p=argparse.ArgumentParser();p.add_argument('--partial',action='store_true');a=p.parse_args()
+     manifest=json.loads((R/'data/manifest.json').read_text());blob=(R/'data/cases.jsonl').read_bytes();assert sha(blob)==manifest['cases_sha256'];assert sha((Path(__file__).resolve().parent/'run.py').read_bytes())==manifest['runner_sha256']
+     for f,h in manifest['upstream_code_hashes'].items():assert sha((R/f).read_bytes())==h
+     cases={c['id']:c for c in map(json.loads,blob.splitlines())};models=[]
+     for name in manifest['models']:
+      folder=R/'results'/name
+      if not (folder/'metadata.json').exists() or not (folder/'raw.jsonl').exists():
+       assert a.partial,name+' missing';continue
+      meta=json.loads((folder/'metadata.json').read_text());assert not meta['smoke_only'];assert meta['model']==name;assert meta['cases_sha256']==manifest['cases_sha256'];assert meta['protocol_sha256']==sha((R/'data/manifest.json').read_bytes());assert meta['runner_sha256']==manifest['runner_sha256'];assert len(meta['warmups'])==3
+      rows=[json.loads(s) for s in (folder/'raw.jsonl').read_text().splitlines()];assert len({x['id'] for x in rows})==len(rows)
+      complete=meta.get('complete') and len(rows)==len(cases) and set(x['id'] for x in rows)==set(cases)
+      if not a.partial:assert complete,name+' incomplete'
+      decisions=[];failures=[]
+      for row in rows:
+       c=cases[row['id']];assert row['tier']==c['tier'];assert row['request_sha256']==c['request_sha256'];task=Task.from_dict(c['task'])
+       z={'id':c['id'],'tier':c['tier'],'family':task.family,'type':task.question['type'],'expected':str(task.expected),'valid':False,'correct':False,'diagnostics':row.get('diagnostics',{})}
+       if row['status']=='ok':
+        if name=='jev-1.13.0':assert row['response']['model']==name
+        ans=row['response']['answers']['decision'];assert ans['type']==task.question['type']
+        if task.question['type']=='noul':
+         val=ans['noul'];probs={'yes':val,'no':1-val}
+        else:probs=ans['probabilities']
+        assert row['probs_as_returned']==probs
+        scored=score_task(probs,task);assert scored==row['scored'];z.update({k:v for k,v in scored.items() if k not in ('error',)})
+        if scored['valid']:
+         z['brier']=brier_score(scored['probs'],str(task.expected),task.labels)
+         total=sum(scored['probs'].values());z['diagnostic_normalized_confidence']=max(scored['probs'].values())/total
+         if task.question['type']=='score':z['expected_level']=task.expected
+       else:failures.append({'id':c['id'],'tier':c['tier'],'error_type':row['error_type'],'error':row['error'],'status_code':row['status_code']})
+       decisions.append(z)
+      result={'model':name,'complete':bool(complete),'requests':len(rows),'successful_requests':sum(x['status']=='ok' for x in rows),'failed_requests':len(failures),'errors':failures,'overall':stats(decisions),'tiers':{t:stats([x for x in decisions if x['tier']==t]) for t in manifest['tiers']},'families':{t:stats([x for x in decisions if x['family']==t]) for t in sorted(set(x['family'] for x in decisions))},'types':{t:stats([x for x in decisions if x['type']==t]) for t in sorted(set(x['type'] for x in decisions))},'raw_sha256':sha((folder/'raw.jsonl').read_bytes()),'metadata_sha256':sha((folder/'metadata.json').read_bytes())}
+      (folder/'quality.json').write_text(json.dumps(result,ensure_ascii=False,indent=2));(folder/'decisions.jsonl').write_text(''.join(json.dumps(x,ensure_ascii=False)+'\n' for x in decisions));models.append(result)
+      print(name,'COMPLETE' if complete else 'PARTIAL',len(rows),{t:round(x['accuracy']*100,2) if x['n'] else None for t,x in result['tiers'].items()},'errors',len(failures))
+     report={'protocol':manifest,'complete':len(models)==len(manifest['models']) and all(m['complete'] for m in models),'models':models,'calibration_note':'Brier hard onehot reference and ECE10 use official scored.probs, whose strict-valid mass is left unchanged. Coverage diagnostic alone normalizes any residual mass before applying fixed0.8 threshold. Not comparable with old soft-teacher Brier/ECE15.'}
+     (R/'summary.json').write_text(json.dumps(report,ensure_ascii=False,indent=2));print('ALL COMPLETE',report['complete'])
+    if __name__=='__main__':main()
+
+import sys
+if '--benchmark' in sys.argv:
+    i=sys.argv.index('--benchmark')
+    benchmark=sys.argv[i+1]
+    del sys.argv[i:i+2]
+    if benchmark != 'jevbench': raise ValueError('Unknown benchmark')
+    analyze_jevbench()
+    raise SystemExit()
+
 """Independently audit raw outputs and derive quality metrics; never call a model."""
 import argparse, collections, hashlib, json, math
 from pathlib import Path

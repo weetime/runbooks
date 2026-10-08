@@ -1,0 +1,129 @@
+{
+  "cases": 1000,
+  "questions": 2600,
+  "cases_sha256": "b7afa7a2f921ab43ada309c59ca41236bcb56fbd330f926cdf98b3f1358a03dd",
+  "requests_sha256": "ff60b6506e18be9e7ef4262174640dc162c0feda4bae13fffcf2caf20e7d9a13",
+  "source_revisions": {
+    "typed-decisions": "e039ebffcc280174dd354227424fb2b249f191de",
+    "massive-intent": "940fd47a81eaa7f2cc7b129674d945d618ac38c2",
+    "xnli": "b8dd5d7af51114dbda02c0e3f6133f332186418e"
+  },
+  "suites": {
+    "typed-decisions": 400,
+    "massive-zh-CN": 300,
+    "xnli-zh": 300
+  },
+  "workflow_counts": {
+    "agent_trace_observability": 100,
+    "customer_service": 100,
+    "invoice_processing": 100,
+    "security_incidents": 100
+  },
+  "selection": {
+    "typed-decisions": "complete all/test split, 400 cases, five questions together per call",
+    "massive-zh-CN": "first300 of frozen mteb test; 20 candidates=gold+19 distractors; Python random seed13, same published Laya builder; not original60-way full test",
+    "xnli-zh": "first300 of frozen zh/test; same published3-way Laya builder"
+  },
+  "reference": "typed-decisions is synthetic with averaged soft teacher distributions; metric means agreement, not human correctness",
+  "repeats": 1,
+  "runtime": "Existing frozen weights/SDK defaults; no fitting on test",
+  "metrics": {
+    "accuracy": "argmax response distribution against supplied gold.label per decision; failed decisions retained in denominator",
+    "brier": "sum over classes of (p-gold)^2, averaged over valid decisions",
+    "kl": "gold||prediction, log(max(pred,1e-12)), averaged over valid decisions",
+    "ece": "15 equal-width confidence bins with top-label hard correctness",
+    "score_mae": "expected rubric index vs gold.score, score questions only"
+  },
+  "parallelism": "Local models may run on distinct NPUs concurrently; new timings diagnostic only, not performance ranking",
+  "models": [
+    "decider-0.8b",
+    "decider-2b",
+    "decider",
+    "decider-12b",
+    "decider-chat-qwen3.6-27b",
+    "decider-chat-gemma4-31b",
+    "decider-35b-a3b",
+    "decider-2b-vision",
+    "laya-en",
+    "laya-ml",
+    "laya-typed",
+    "jev-1.13.0"
+  ],
+  "files": [
+    {
+      "path": "cases.jsonl",
+      "bytes": 2031420,
+      "sha256": "b7afa7a2f921ab43ada309c59ca41236bcb56fbd330f926cdf98b3f1358a03dd"
+    },
+    {
+      "path": "laya-benchmark-official.py",
+      "bytes": 33221,
+      "sha256": "d0cb251941b4fecbced045b37772e9eaf88b0316e4ab8aec4e0938dc8ddf5a34"
+    },
+    {
+      "path": "massive/README.md",
+      "bytes": 34420,
+      "sha256": "9a74b2298db2cb509eb39725612ef5d5b9eb99d59ef7c960ab01f58526051e3d"
+    },
+    {
+      "path": "massive/massive.py",
+      "bytes": 30340,
+      "sha256": "b6086578ec0bd3e29000ed4d73f2841dfba48cd8e5a91b00f92c87411df368ba"
+    },
+    {
+      "path": "massive-intent-repo.json",
+      "bytes": 30744,
+      "sha256": "f78d089dff2c743bc73e85f714585481901483a83bd1888b99efdbb582ef766d"
+    },
+    {
+      "path": "massive-intent-zh-CN.json.gz",
+      "bytes": 59805,
+      "sha256": "57d7ae5ef5376eeb82a10f109a1111d95e88e4ae165febedc4ba5767ce755295"
+    },
+    {
+      "path": "massive-repo.json",
+      "bytes": 7338,
+      "sha256": "8409dd59203484e4b1c9d62e87719d1072b2650e4c7e2f45d3ac8b5d4f8d0271"
+    },
+    {
+      "path": "requests.jsonl",
+      "bytes": 1326754,
+      "sha256": "ff60b6506e18be9e7ef4262174640dc162c0feda4bae13fffcf2caf20e7d9a13"
+    },
+    {
+      "path": "typed-decisions/README.md",
+      "bytes": 15271,
+      "sha256": "257572fae9b6601eb143b9842da9d40ee0f13e1cb239e335d86b020cd4fe483d"
+    },
+    {
+      "path": "typed-decisions/all/test-00000-of-00001.parquet",
+      "bytes": 222140,
+      "sha256": "4f294f218ea1da27f3efef936359389c62ea4d3973a41457732990f1d31b647c"
+    },
+    {
+      "path": "typed-decisions/eval.yaml",
+      "bytes": 532,
+      "sha256": "9b8d323eb146f5b55ec168335710b77c6239efaa37a19861b4981d6c8631a6f7"
+    },
+    {
+      "path": "typed-decisions-repo.json",
+      "bytes": 4509,
+      "sha256": "c38231edaca8626f6c866f092b2ae680bda6dfe63fe66377f3ce5bddbb0c54b9"
+    },
+    {
+      "path": "xnli/README.md",
+      "bytes": 20789,
+      "sha256": "e951158edde65027380c20e827c3c2ac7ca9903bff0ff65209806b9d71a0607a"
+    },
+    {
+      "path": "xnli/zh/test-00000-of-00001.parquet",
+      "bytes": 309645,
+      "sha256": "0588db7da3ed00a677dc6ac521e9b3e1c8ecf286ea0c2182b9a6a346b22c4645"
+    },
+    {
+      "path": "xnli-repo.json",
+      "bytes": 28415,
+      "sha256": "555a34b5c1e74d54a0a093ef603801d49af62871852298af7946495a72f92d0f"
+    }
+  ]
+}

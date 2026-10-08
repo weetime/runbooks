@@ -1,0 +1,1502 @@
+{
+  "_id": "628169a3ecd5bc1392694110",
+  "id": "mteb/amazon_massive_intent",
+  "author": "mteb",
+  "sha": "940fd47a81eaa7f2cc7b129674d945d618ac38c2",
+  "lastModified": "2026-02-24T21:18:25.000Z",
+  "private": false,
+  "gated": false,
+  "disabled": false,
+  "tags": [
+    "task_categories:text-classification",
+    "annotations_creators:human-annotated",
+    "multilinguality:translated",
+    "language:afr",
+    "language:amh",
+    "language:ara",
+    "language:aze",
+    "language:ben",
+    "language:cmo",
+    "language:cym",
+    "language:dan",
+    "language:deu",
+    "language:ell",
+    "language:eng",
+    "language:fas",
+    "language:fin",
+    "language:fra",
+    "language:heb",
+    "language:hin",
+    "language:hun",
+    "language:hye",
+    "language:ind",
+    "language:isl",
+    "language:ita",
+    "language:jav",
+    "language:jpn",
+    "language:kan",
+    "language:kat",
+    "language:khm",
+    "language:kor",
+    "language:lav",
+    "language:mal",
+    "language:mon",
+    "language:msa",
+    "language:mya",
+    "language:nld",
+    "language:nob",
+    "language:pol",
+    "language:por",
+    "language:ron",
+    "language:rus",
+    "language:slv",
+    "language:spa",
+    "language:sqi",
+    "language:swa",
+    "language:swe",
+    "language:tam",
+    "language:tel",
+    "language:tgl",
+    "language:tha",
+    "language:tur",
+    "language:urd",
+    "language:vie",
+    "license:apache-2.0",
+    "size_categories:100K<n<1M",
+    "modality:text",
+    "arxiv:2204.08582",
+    "arxiv:2502.13595",
+    "arxiv:2210.07316",
+    "region:us",
+    "mteb",
+    "text"
+  ],
+  "description": "\n  MassiveIntentClassification\n  An MTEB dataset\n  Massive Text Embedding Benchmark\n\n\nMASSIVE: A 1M-Example Multilingual Natural Language Understanding Dataset with 51 Typologically-Diverse Languages\n\n\t\n\t\t\n\n\n\n\n\t\t\nTask category\nt2c\n\n\nDomains\nSpoken\n\n\nReference\nhttps://arxiv.org/abs/2204.08582\n\n\n\t\n\n\n\t\n\t\t\n\t\n\t\n\t\tHow to evaluate on this task\n\t\n\nYou can evaluate an embedding model on this dataset using the following code:\nimport mteb\n\ntask = mteb.get_tasks([\"MassiveIntentClassification\"])\nevaluator… See the full description on the dataset page: https://huggingface.co/datasets/mteb/amazon_massive_intent.",
+  "downloads": 27290,
+  "likes": 27,
+  "cardData": {
+    "annotations_creators": [
+      "human-annotated"
+    ],
+    "language": [
+      "afr",
+      "amh",
+      "ara",
+      "aze",
+      "ben",
+      "cmo",
+      "cym",
+      "dan",
+      "deu",
+      "ell",
+      "eng",
+      "fas",
+      "fin",
+      "fra",
+      "heb",
+      "hin",
+      "hun",
+      "hye",
+      "ind",
+      "isl",
+      "ita",
+      "jav",
+      "jpn",
+      "kan",
+      "kat",
+      "khm",
+      "kor",
+      "lav",
+      "mal",
+      "mon",
+      "msa",
+      "mya",
+      "nld",
+      "nob",
+      "pol",
+      "por",
+      "ron",
+      "rus",
+      "slv",
+      "spa",
+      "sqi",
+      "swa",
+      "swe",
+      "tam",
+      "tel",
+      "tgl",
+      "tha",
+      "tur",
+      "urd",
+      "vie"
+    ],
+    "license": "apache-2.0",
+    "multilinguality": "translated",
+    "task_categories": [
+      "text-classification"
+    ],
+    "task_ids": [],
+    "configs": [
+      {
+        "config_name": "default",
+        "data_files": [
+          {
+            "path": "train/*.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/*.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/*.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ta",
+        "data_files": [
+          {
+            "path": "train/ta.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ta.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ta.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "is",
+        "data_files": [
+          {
+            "path": "train/is.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/is.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/is.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "pl",
+        "data_files": [
+          {
+            "path": "train/pl.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/pl.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/pl.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "zh-CN",
+        "data_files": [
+          {
+            "path": "train/zh-CN.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/zh-CN.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/zh-CN.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "el",
+        "data_files": [
+          {
+            "path": "train/el.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/el.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/el.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ru",
+        "data_files": [
+          {
+            "path": "train/ru.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ru.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ru.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "te",
+        "data_files": [
+          {
+            "path": "train/te.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/te.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/te.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "cy",
+        "data_files": [
+          {
+            "path": "train/cy.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/cy.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/cy.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "he",
+        "data_files": [
+          {
+            "path": "train/he.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/he.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/he.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "de",
+        "data_files": [
+          {
+            "path": "train/de.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/de.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/de.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "af",
+        "data_files": [
+          {
+            "path": "train/af.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/af.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/af.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ml",
+        "data_files": [
+          {
+            "path": "train/ml.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ml.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ml.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "sl",
+        "data_files": [
+          {
+            "path": "train/sl.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/sl.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/sl.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "vi",
+        "data_files": [
+          {
+            "path": "train/vi.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/vi.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/vi.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "mn",
+        "data_files": [
+          {
+            "path": "train/mn.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/mn.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/mn.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "tl",
+        "data_files": [
+          {
+            "path": "train/tl.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/tl.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/tl.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "it",
+        "data_files": [
+          {
+            "path": "train/it.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/it.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/it.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "jv",
+        "data_files": [
+          {
+            "path": "train/jv.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/jv.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/jv.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "sq",
+        "data_files": [
+          {
+            "path": "train/sq.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/sq.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/sq.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "fa",
+        "data_files": [
+          {
+            "path": "train/fa.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/fa.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/fa.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "nb",
+        "data_files": [
+          {
+            "path": "train/nb.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/nb.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/nb.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "km",
+        "data_files": [
+          {
+            "path": "train/km.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/km.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/km.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "th",
+        "data_files": [
+          {
+            "path": "train/th.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/th.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/th.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ja",
+        "data_files": [
+          {
+            "path": "train/ja.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ja.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ja.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "hi",
+        "data_files": [
+          {
+            "path": "train/hi.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/hi.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/hi.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "id",
+        "data_files": [
+          {
+            "path": "train/id.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/id.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/id.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "kn",
+        "data_files": [
+          {
+            "path": "train/kn.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/kn.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/kn.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "fi",
+        "data_files": [
+          {
+            "path": "train/fi.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/fi.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/fi.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ur",
+        "data_files": [
+          {
+            "path": "train/ur.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ur.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ur.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "my",
+        "data_files": [
+          {
+            "path": "train/my.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/my.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/my.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "lv",
+        "data_files": [
+          {
+            "path": "train/lv.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/lv.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/lv.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "fr",
+        "data_files": [
+          {
+            "path": "train/fr.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/fr.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/fr.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ko",
+        "data_files": [
+          {
+            "path": "train/ko.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ko.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ko.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "sw",
+        "data_files": [
+          {
+            "path": "train/sw.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/sw.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/sw.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "sv",
+        "data_files": [
+          {
+            "path": "train/sv.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/sv.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/sv.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "nl",
+        "data_files": [
+          {
+            "path": "train/nl.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/nl.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/nl.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "da",
+        "data_files": [
+          {
+            "path": "train/da.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/da.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/da.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ar",
+        "data_files": [
+          {
+            "path": "train/ar.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ar.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ar.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ms",
+        "data_files": [
+          {
+            "path": "train/ms.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ms.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ms.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "en",
+        "data_files": [
+          {
+            "path": "train/en.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/en.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/en.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "am",
+        "data_files": [
+          {
+            "path": "train/am.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/am.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/am.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "pt",
+        "data_files": [
+          {
+            "path": "train/pt.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/pt.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/pt.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ka",
+        "data_files": [
+          {
+            "path": "train/ka.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ka.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ka.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "ro",
+        "data_files": [
+          {
+            "path": "train/ro.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/ro.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/ro.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "tr",
+        "data_files": [
+          {
+            "path": "train/tr.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/tr.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/tr.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "hu",
+        "data_files": [
+          {
+            "path": "train/hu.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/hu.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/hu.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "zh-TW",
+        "data_files": [
+          {
+            "path": "train/zh-TW.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/zh-TW.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/zh-TW.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "bn",
+        "data_files": [
+          {
+            "path": "train/bn.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/bn.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/bn.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "hy",
+        "data_files": [
+          {
+            "path": "train/hy.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/hy.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/hy.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "es",
+        "data_files": [
+          {
+            "path": "train/es.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/es.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/es.json.gz",
+            "split": "validation"
+          }
+        ]
+      },
+      {
+        "config_name": "az",
+        "data_files": [
+          {
+            "path": "train/az.json.gz",
+            "split": "train"
+          },
+          {
+            "path": "test/az.json.gz",
+            "split": "test"
+          },
+          {
+            "path": "validation/az.json.gz",
+            "split": "validation"
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "mteb",
+      "text"
+    ]
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "eval.yaml"
+    },
+    {
+      "rfilename": "test/af.json.gz"
+    },
+    {
+      "rfilename": "test/am.json.gz"
+    },
+    {
+      "rfilename": "test/ar.json.gz"
+    },
+    {
+      "rfilename": "test/az.json.gz"
+    },
+    {
+      "rfilename": "test/bn.json.gz"
+    },
+    {
+      "rfilename": "test/cy.json.gz"
+    },
+    {
+      "rfilename": "test/da.json.gz"
+    },
+    {
+      "rfilename": "test/de.json.gz"
+    },
+    {
+      "rfilename": "test/el.json.gz"
+    },
+    {
+      "rfilename": "test/en.json.gz"
+    },
+    {
+      "rfilename": "test/es.json.gz"
+    },
+    {
+      "rfilename": "test/fa.json.gz"
+    },
+    {
+      "rfilename": "test/fi.json.gz"
+    },
+    {
+      "rfilename": "test/fr.json.gz"
+    },
+    {
+      "rfilename": "test/he.json.gz"
+    },
+    {
+      "rfilename": "test/hi.json.gz"
+    },
+    {
+      "rfilename": "test/hu.json.gz"
+    },
+    {
+      "rfilename": "test/hy.json.gz"
+    },
+    {
+      "rfilename": "test/id.json.gz"
+    },
+    {
+      "rfilename": "test/is.json.gz"
+    },
+    {
+      "rfilename": "test/it.json.gz"
+    },
+    {
+      "rfilename": "test/ja.json.gz"
+    },
+    {
+      "rfilename": "test/jv.json.gz"
+    },
+    {
+      "rfilename": "test/ka.json.gz"
+    },
+    {
+      "rfilename": "test/km.json.gz"
+    },
+    {
+      "rfilename": "test/kn.json.gz"
+    },
+    {
+      "rfilename": "test/ko.json.gz"
+    },
+    {
+      "rfilename": "test/lv.json.gz"
+    },
+    {
+      "rfilename": "test/ml.json.gz"
+    },
+    {
+      "rfilename": "test/mn.json.gz"
+    },
+    {
+      "rfilename": "test/ms.json.gz"
+    },
+    {
+      "rfilename": "test/my.json.gz"
+    },
+    {
+      "rfilename": "test/nb.json.gz"
+    },
+    {
+      "rfilename": "test/nl.json.gz"
+    },
+    {
+      "rfilename": "test/pl.json.gz"
+    },
+    {
+      "rfilename": "test/pt.json.gz"
+    },
+    {
+      "rfilename": "test/ro.json.gz"
+    },
+    {
+      "rfilename": "test/ru.json.gz"
+    },
+    {
+      "rfilename": "test/sl.json.gz"
+    },
+    {
+      "rfilename": "test/sq.json.gz"
+    },
+    {
+      "rfilename": "test/sv.json.gz"
+    },
+    {
+      "rfilename": "test/sw.json.gz"
+    },
+    {
+      "rfilename": "test/ta.json.gz"
+    },
+    {
+      "rfilename": "test/te.json.gz"
+    },
+    {
+      "rfilename": "test/th.json.gz"
+    },
+    {
+      "rfilename": "test/tl.json.gz"
+    },
+    {
+      "rfilename": "test/tr.json.gz"
+    },
+    {
+      "rfilename": "test/ur.json.gz"
+    },
+    {
+      "rfilename": "test/vi.json.gz"
+    },
+    {
+      "rfilename": "test/zh-CN.json.gz"
+    },
+    {
+      "rfilename": "test/zh-TW.json.gz"
+    },
+    {
+      "rfilename": "train/af.json.gz"
+    },
+    {
+      "rfilename": "train/am.json.gz"
+    },
+    {
+      "rfilename": "train/ar.json.gz"
+    },
+    {
+      "rfilename": "train/az.json.gz"
+    },
+    {
+      "rfilename": "train/bn.json.gz"
+    },
+    {
+      "rfilename": "train/cy.json.gz"
+    },
+    {
+      "rfilename": "train/da.json.gz"
+    },
+    {
+      "rfilename": "train/de.json.gz"
+    },
+    {
+      "rfilename": "train/el.json.gz"
+    },
+    {
+      "rfilename": "train/en.json.gz"
+    },
+    {
+      "rfilename": "train/es.json.gz"
+    },
+    {
+      "rfilename": "train/fa.json.gz"
+    },
+    {
+      "rfilename": "train/fi.json.gz"
+    },
+    {
+      "rfilename": "train/fr.json.gz"
+    },
+    {
+      "rfilename": "train/he.json.gz"
+    },
+    {
+      "rfilename": "train/hi.json.gz"
+    },
+    {
+      "rfilename": "train/hu.json.gz"
+    },
+    {
+      "rfilename": "train/hy.json.gz"
+    },
+    {
+      "rfilename": "train/id.json.gz"
+    },
+    {
+      "rfilename": "train/is.json.gz"
+    },
+    {
+      "rfilename": "train/it.json.gz"
+    },
+    {
+      "rfilename": "train/ja.json.gz"
+    },
+    {
+      "rfilename": "train/jv.json.gz"
+    },
+    {
+      "rfilename": "train/ka.json.gz"
+    },
+    {
+      "rfilename": "train/km.json.gz"
+    },
+    {
+      "rfilename": "train/kn.json.gz"
+    },
+    {
+      "rfilename": "train/ko.json.gz"
+    },
+    {
+      "rfilename": "train/lv.json.gz"
+    },
+    {
+      "rfilename": "train/ml.json.gz"
+    },
+    {
+      "rfilename": "train/mn.json.gz"
+    },
+    {
+      "rfilename": "train/ms.json.gz"
+    },
+    {
+      "rfilename": "train/my.json.gz"
+    },
+    {
+      "rfilename": "train/nb.json.gz"
+    },
+    {
+      "rfilename": "train/nl.json.gz"
+    },
+    {
+      "rfilename": "train/pl.json.gz"
+    },
+    {
+      "rfilename": "train/pt.json.gz"
+    },
+    {
+      "rfilename": "train/ro.json.gz"
+    },
+    {
+      "rfilename": "train/ru.json.gz"
+    },
+    {
+      "rfilename": "train/sl.json.gz"
+    },
+    {
+      "rfilename": "train/sq.json.gz"
+    },
+    {
+      "rfilename": "train/sv.json.gz"
+    },
+    {
+      "rfilename": "train/sw.json.gz"
+    },
+    {
+      "rfilename": "train/ta.json.gz"
+    },
+    {
+      "rfilename": "train/te.json.gz"
+    },
+    {
+      "rfilename": "train/th.json.gz"
+    },
+    {
+      "rfilename": "train/tl.json.gz"
+    },
+    {
+      "rfilename": "train/tr.json.gz"
+    },
+    {
+      "rfilename": "train/ur.json.gz"
+    },
+    {
+      "rfilename": "train/vi.json.gz"
+    },
+    {
+      "rfilename": "train/zh-CN.json.gz"
+    },
+    {
+      "rfilename": "train/zh-TW.json.gz"
+    },
+    {
+      "rfilename": "validation/af.json.gz"
+    },
+    {
+      "rfilename": "validation/am.json.gz"
+    },
+    {
+      "rfilename": "validation/ar.json.gz"
+    },
+    {
+      "rfilename": "validation/az.json.gz"
+    },
+    {
+      "rfilename": "validation/bn.json.gz"
+    },
+    {
+      "rfilename": "validation/cy.json.gz"
+    },
+    {
+      "rfilename": "validation/da.json.gz"
+    },
+    {
+      "rfilename": "validation/de.json.gz"
+    },
+    {
+      "rfilename": "validation/el.json.gz"
+    },
+    {
+      "rfilename": "validation/en.json.gz"
+    },
+    {
+      "rfilename": "validation/es.json.gz"
+    },
+    {
+      "rfilename": "validation/fa.json.gz"
+    },
+    {
+      "rfilename": "validation/fi.json.gz"
+    },
+    {
+      "rfilename": "validation/fr.json.gz"
+    },
+    {
+      "rfilename": "validation/he.json.gz"
+    },
+    {
+      "rfilename": "validation/hi.json.gz"
+    },
+    {
+      "rfilename": "validation/hu.json.gz"
+    },
+    {
+      "rfilename": "validation/hy.json.gz"
+    },
+    {
+      "rfilename": "validation/id.json.gz"
+    },
+    {
+      "rfilename": "validation/is.json.gz"
+    },
+    {
+      "rfilename": "validation/it.json.gz"
+    },
+    {
+      "rfilename": "validation/ja.json.gz"
+    },
+    {
+      "rfilename": "validation/jv.json.gz"
+    },
+    {
+      "rfilename": "validation/ka.json.gz"
+    },
+    {
+      "rfilename": "validation/km.json.gz"
+    },
+    {
+      "rfilename": "validation/kn.json.gz"
+    },
+    {
+      "rfilename": "validation/ko.json.gz"
+    },
+    {
+      "rfilename": "validation/lv.json.gz"
+    },
+    {
+      "rfilename": "validation/ml.json.gz"
+    },
+    {
+      "rfilename": "validation/mn.json.gz"
+    },
+    {
+      "rfilename": "validation/ms.json.gz"
+    },
+    {
+      "rfilename": "validation/my.json.gz"
+    },
+    {
+      "rfilename": "validation/nb.json.gz"
+    },
+    {
+      "rfilename": "validation/nl.json.gz"
+    },
+    {
+      "rfilename": "validation/pl.json.gz"
+    },
+    {
+      "rfilename": "validation/pt.json.gz"
+    },
+    {
+      "rfilename": "validation/ro.json.gz"
+    },
+    {
+      "rfilename": "validation/ru.json.gz"
+    },
+    {
+      "rfilename": "validation/sl.json.gz"
+    },
+    {
+      "rfilename": "validation/sq.json.gz"
+    },
+    {
+      "rfilename": "validation/sv.json.gz"
+    },
+    {
+      "rfilename": "validation/sw.json.gz"
+    },
+    {
+      "rfilename": "validation/ta.json.gz"
+    },
+    {
+      "rfilename": "validation/te.json.gz"
+    },
+    {
+      "rfilename": "validation/th.json.gz"
+    },
+    {
+      "rfilename": "validation/tl.json.gz"
+    },
+    {
+      "rfilename": "validation/tr.json.gz"
+    },
+    {
+      "rfilename": "validation/ur.json.gz"
+    },
+    {
+      "rfilename": "validation/vi.json.gz"
+    },
+    {
+      "rfilename": "validation/zh-CN.json.gz"
+    },
+    {
+      "rfilename": "validation/zh-TW.json.gz"
+    }
+  ],
+  "createdAt": "2022-05-15T20:59:15.000Z",
+  "usedStorage": 87014311
+}

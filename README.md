@@ -9,4 +9,4 @@
 |---|---|
 | [2026-08-12-deepseek-topology-tpot](./2026-08-12-deepseek-topology-tpot) | 按 SLO 档位选部署拓扑:DeepSeek-V4-Flash 在 16 张 910B4 上的六格实测 |
 | [2026-08-10-qwen3-omni-realtime-capacity](./2026-08-10-qwen3-omni-realtime-capacity) | 实测 Qwen3-Omni-30B 带语音输出:A100 与昇腾 910B3/910B4 三方对比 |
-| [2026-10-08-decision-models-910b3](./2026-10-08-decision-models-910b3) | Jev、decider 与 Laya：多任务决策实测 |
+| [2026-10-08-decision-models-910b3](./2026-10-08-decision-models-910b3) | 开源决策模型能替代 Jev 吗？12 个版本实测 |

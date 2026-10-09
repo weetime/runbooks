@@ -1,0 +1,12 @@
+{
+  "frozen_utc": "2026-10-09T11:25:20.741861+00:00",
+  "reason": "Installed InputBatch.swap_states aliases CPU tensor row views; stable source-level reproduction confirms both rows become old row2.",
+  "old_run": "attempt-06 invalidated; no performance started",
+  "fix": "Scoped wrapper saves independent copies of mask rows, invokes stock swap_states, restores correctly exchanged rows. Async scheduling and other engine settings unchanged.",
+  "gate": "132 mixed image/text calls, disjoint candidate sets and varied prefill lengths; strict candidate LP completeness, normalized finite distributions, sequential versus concurrent max delta <=0.05.",
+  "sources": {
+    "serve_decide_ascend.py": "38021a5d6ce31e5d9702553a88a88cd077999de60c29613d6d1d6749496da7f4",
+    "gate_and_text.py": "5e9b7e675d404b7d689dd60c92f1825f3299de909432e7b61f0ba02f4c699696",
+    "gate_and_perf.py": "a4a970b5a3b8240dd4bca33482af9c0f61946997293d28566857633d6248dddd"
+  }
+}

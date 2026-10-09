@@ -1,0 +1,11 @@
+{
+  "rows": 64,
+  "seed": 20261009,
+  "sha256": "47f6447e184c881977941e0efd494cbbe01de77ece63b31420d8e4a3345ec8f8",
+  "dataset": "osunlp/Multimodal-Mind2Web",
+  "revision": "1b4c6a8cf9f77b7a5e0d641959935c80c4a05889",
+  "split": "test_task, shard 0",
+  "protocol": "First 64 eligible first-900px viewport cases; one positive plus seven sampled visible interactive negatives; numbered screenshot + element text and prior actions.",
+  "exclusions": "Target not visible in first viewport, fewer than seven visible interactive negatives, missing screenshot.",
+  "limitations": "Oracle candidate inclusion; adapted element-selection accuracy, not official step success or full agent task success. No model outputs used in sampling."
+}

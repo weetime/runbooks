@@ -1,0 +1,46 @@
+{
+  "frozen_at": "2026-10-09T10:38:39.605075+00:00",
+  "purpose": "Measure deployment throughput and queueing for one typed judgment per HTTP request; distinguish text versus fixed-size image input",
+  "identity": "BF16 JEV-27B-VL System1, TP2 NPU, eager; full decision adapter; no CPU offload",
+  "correctness_required": "startup + text + vision + batch parity pass before scoring",
+  "scope": "new independent benchmark; not directly comparable to original three-question bundled req/s",
+  "independent_restarts": 3,
+  "concurrency": [
+    1,
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "minimum_requests": 128,
+  "minimum_seconds": 5,
+  "p99_point": {
+    "concurrency": 8,
+    "minimum_requests": 768
+  },
+  "percentile_method": "nearest rank; P95/P90 >=128, P99 >=662; independent runs, no pooling",
+  "workloads": {
+    "text": "Original short 800-character states; fixed routing Choice only, 64 cases",
+    "vision": "First 16 frozen CharXiv inputs, resize to 448x448 bounding box, fixed same cases across restarts; one image and one Choice"
+  },
+  "cache": "prefix disabled, no result cache; record multimodal processor cache defaults separately, repeated images warm the processor cache",
+  "results": [
+    "success req/s = successful requests / complete-drain wall time",
+    "P50/P90/P95/P99 (success only)",
+    "invalid/error requests count and raw",
+    "input prompt_tokens range",
+    "NPU AICore/HBM/power time series sampled ~1Hz, actual gaps retained"
+  ],
+  "no_production_slo": "Closed-loop diagnostic, not sustainable open-loop capacity or business-SLO guarantee",
+  "source_sha256": {
+    "perf-text.jsonl": "e72bad718f072cbd1674f7ffe95b1d415001a720edec0c192431deae02a78541"
+  },
+  "remainder": "Original decider full performance workflow remains separately outstanding",
+  "cache_warmup_amendment": {
+    "frozen_utc": "2026-10-09T11:34:20.713714+00:00",
+    "before_any_performance_results": true,
+    "warmup": "Warm every frozen workload input (64 text,16 images) before its concurrency sweep; all repeated image processor inputs are warm even at C1. Prefix/KV reuse stays disabled.",
+    "reason": "8-of-16 image warmup would leave C1 partly cold and later concurrency points warm."
+  }
+}

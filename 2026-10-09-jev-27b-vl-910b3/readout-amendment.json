@@ -1,0 +1,11 @@
+{
+  "frozen_utc": "2026-10-09T11:00:42.139525+00:00",
+  "reason": "Ascend model_runner_v1 initializes AscendSampler() with raw_logprobs despite processed_logprobs engine flag. All attempt-05 outputs invalidated.",
+  "implementation": "Isolated server constructor default processed_logprobs; reject missing/nonfinite candidate LP. No global package changes.",
+  "gate": "Raw API probes must return exactly every candidate token, finite LP, exponentiated sum within 0.001; then image/text truth and concurrent distribution parity.",
+  "sources": {
+    "serve_decide_ascend.py": "8b452842e97bc774949ddb80537adefcf92d2cbf839dc3bd47f80e13204b1173",
+    "gate_and_text.py": "59783578befd14f1d218945ebebf08379e6988ce62d9ce0b7880c3818017c7a9",
+    "gate_and_perf.py": "82b2876ab763dd0703353d69d019ba22c466f9ddd87ef1c6d0259148a91993dd"
+  }
+}

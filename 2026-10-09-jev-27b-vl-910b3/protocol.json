@@ -1,0 +1,56 @@
+{
+  "frozen_at": "2026-10-09T10:13:02.326647+00:00",
+  "repo": "autotrust/JEV-27B-VL",
+  "revision": "ba3f0d584994b37998f235c0a3f6f1beff32ba1e",
+  "scope": "独立新增实验，保留原能力与性能结果不变",
+  "gate0": [
+    "固定版本下载，每文件SHA校验",
+    "当前vLLM-Ascend的Qwen3.5多模态、目标LoRA模块、决策head支持核查",
+    "NPU BF16，禁止CPU权重卸载",
+    "文本、图片小样本，概率有限且归一化，图像变化有效",
+    "只有通过正确性门再展开正式测评"
+  ],
+  "configuration": {
+    "dtype": "bfloat16",
+    "initial_tensor_parallel": 2,
+    "max_model_len": 4096,
+    "max_num_seqs": 8,
+    "max_images": 1,
+    "engine": "vllm-ascend；保留上游serve_decide和校准参数",
+    "graph": "先记录实际支持；不得仅凭flag宣称启用"
+  },
+  "formal_if_gate_passes": {
+    "text": "复用原64中文消息、公开中文分类/推断与JevBench样本，保持输入/标签不变",
+    "vision": "CharXiv、Mind2Web冻结子集；公开数据标签，运维截图独立标记自研",
+    "performance": "先三次独立重启短文本与固定分辨率单图，客户端并发1/4/8/16/32/64；概率错误、失败全部保留",
+    "metrics": [
+      "req/s",
+      "decisions/s",
+      "P50",
+      "P90",
+      "P95",
+      "P99",
+      "NPU AICore",
+      "HBM",
+      "power",
+      "CPU RSS"
+    ],
+    "minimum_samples": {
+      "p95": 128,
+      "p99": 662
+    },
+    "no_claims": [
+      "复现全部榜单或私有集",
+      "用户产线SLO已满足",
+      "GPU跨硬件同口径性能"
+    ]
+  },
+  "source_sha256": {
+    "upstream/calibration.json": "902f4f26fdf1b92224c32b706ee6cea381f6465621c82975bf7e0023c02d9dd2",
+    "upstream/config.json": "191e0af232104ed8b65258cf3fb2b842e288008baca7633c11b82a1ac7203aab",
+    "upstream/serve_decide.py": "b4c95faf8619b32241394f68dd1b5b5a1702a94da96f59c5467d8de4367b5132",
+    "upstream/serve.sh": "08e6600fcbef6348280ab592b5ca13b71bc3e495524f9aba71163f87dac9be45",
+    "upstream/adapter_vllm/adapter_config.json": "5ae16c5e11f37c5a67ec0e3b16d871fcc19c069090c1e42a6289f63c8067f6b6",
+    "upstream/adapter_vllm/decision_head.json": "79fc56c3a030204a2410e6347272fb27facfe299f2f8c0a714e78fc6f8062776"
+  }
+}

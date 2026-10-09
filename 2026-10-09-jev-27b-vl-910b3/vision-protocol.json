@@ -1,0 +1,42 @@
+{
+  "frozen_at": "2026-10-09T10:33:05.806078+00:00",
+  "correctness_requirement": "Do not run unless NPU engine decision LoRA, text, image and batch-parity gates pass",
+  "inputs": [
+    {
+      "source": "princeton-nlp/CharXiv validation",
+      "revision": "f441eb632fc62f6f777830a0f47619e6e86459b0",
+      "rows": 64,
+      "balanced_counts": {
+        "answer-present": 32,
+        "not-applicable": 32
+      },
+      "seed": 20261009,
+      "sha256": "f6d2956b124bc72c878e00b2abef3ffa1d79f2101938e5398b9aa91da3d6b8ca",
+      "adaptation": "Counting questions converted from open-ended to 4-option Choice; distractors sampled from integers 0–30 and Not Applicable; not official CharXiv score or Decision Index reproduction.",
+      "ablation": "Run same questions with images and without images; separate accuracy and calibration, fixed original question text.",
+      "images": "Original public charts, longest edge <=1024, no cropping"
+    },
+    {
+      "rows": 64,
+      "seed": 20261009,
+      "sha256": "47f6447e184c881977941e0efd494cbbe01de77ece63b31420d8e4a3345ec8f8",
+      "dataset": "osunlp/Multimodal-Mind2Web",
+      "revision": "1b4c6a8cf9f77b7a5e0d641959935c80c4a05889",
+      "split": "test_task, shard 0",
+      "protocol": "First 64 eligible first-900px viewport cases; one positive plus seven sampled visible interactive negatives; numbered screenshot + element text and prior actions.",
+      "exclusions": "Target not visible in first viewport, fewer than seven visible interactive negatives, missing screenshot.",
+      "limitations": "Oracle candidate inclusion; adapted element-selection accuracy, not official step success or full agent task success. No model outputs used in sampling."
+    }
+  ],
+  "request_count": 256,
+  "execution": "4 threads, image and no-image per question; capability-only, no performance conclusions from replay timings",
+  "gold": "Strict choice_index equality; failed/invalid calls counted as wrong; retain all responses and failures",
+  "source_sha256": {
+    "run_vision.py": "a44ab3ae5ebe79d4ad0c77dd676560a6ed25b6a2eac23460a09e60200b1f4cbe",
+    "prepare_mind2web.py": "adab9fcd27ef765cb49ce08f91e1ef86d3821392485ea7f5dcc1f7ab5ecaf031"
+  },
+  "text_protocol_clarifications": [
+    "Source Score tasks have 4 or 5 levels, explicitly mapped to Choice with original descriptions.",
+    "20-option MASSIVE uses upstream wide-label extension beyond 16 trained Choice labels; separate interpretation."
+  ]
+}

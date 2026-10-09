@@ -1,0 +1,16 @@
+{
+  "rows": 2895,
+  "decision_counts": {
+    "feishu-zh": 64,
+    "jevbench-public": 231,
+    "typed-decisions": 2000,
+    "massive-zh-CN": 300,
+    "xnli-zh": 300
+  },
+  "sha256": "fc4af667b048fd5d31e42d09247a43297207ed0841b4d5c32ef6497b261b4cae",
+  "notes": [
+    "One wire call per judgment; original multi-question requests are expanded.",
+    "Four-level Score is explicitly adapted to Choice with unchanged criteria.",
+    "Gold fields are never sent to the inference endpoint."
+  ]
+}

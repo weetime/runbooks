@@ -1,0 +1,37 @@
+{
+  "frozen_at": "2026-10-09T10:22:11.887616+00:00",
+  "text_rows": {
+    "rows": 2895,
+    "decision_counts": {
+      "feishu-zh": 64,
+      "jevbench-public": 231,
+      "typed-decisions": 2000,
+      "massive-zh-CN": 300,
+      "xnli-zh": 300
+    },
+    "sha256": "fc4af667b048fd5d31e42d09247a43297207ed0841b4d5c32ef6497b261b4cae",
+    "notes": [
+      "One wire call per judgment; original multi-question requests are expanded.",
+      "Four-level Score is explicitly adapted to Choice with unchanged criteria.",
+      "Gold fields are never sent to the inference endpoint."
+    ]
+  },
+  "correctness_gate": {
+    "synthetic_color_images": 4,
+    "text_truth_probes": 2,
+    "concurrent_parity_calls": 16,
+    "max_probability_delta": 0.05,
+    "argmax_changes": 0
+  },
+  "adaptations": [
+    "仅替换vLLM CLI入口；上游决策readout逻辑不变",
+    "原四级Score通过Choice保留四个语义等级，单列适配结果",
+    "HTTP每题一次；不可直接把调用数当作原多题请求数"
+  ],
+  "source_sha256": {
+    "gate_and_text.py": "db2f191893d2ad97f09993b34cabb17ae2d2ec4701e201b07515f7a0e760ce24",
+    "prepare_text.py": "f90bab6a8908c0fc8dbeedb6555b64f7fd837ad5f8d1359c22a2ba68cd0bd668",
+    "start_server.sh": "ea351ebbad097a887ab65902c48c982ca9fbeecf30956be7fda8156dd811faca",
+    "serve_decide_ascend.py": "fdb27cf41b37f093c69f8b909028d0d1dc8919172db4d0ec321ad48663c16da5"
+  }
+}

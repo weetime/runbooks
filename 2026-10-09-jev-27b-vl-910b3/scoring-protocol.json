@@ -1,0 +1,11 @@
+{
+  "frozen_at": "2026-10-09T10:47:46.938172+00:00",
+  "metric": "top1 exact match after deterministic label normalization; failed calls count wrong",
+  "noul_aliases": {
+    "yes": "true",
+    "no": "false"
+  },
+  "other_labels": "str(original gold); no task-dependent remapping",
+  "reference": "Original JevBench adapters normalize TypeSafe true/false to yes/no. Convert gold into JEV API native false/true labels.",
+  "raw": "Keep original model outputs and original gold; analysis recomputes correctness rather than trusting naive runner correct flags."
+}

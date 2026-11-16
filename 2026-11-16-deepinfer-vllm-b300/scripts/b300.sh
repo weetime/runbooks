@@ -120,7 +120,7 @@ import json,sys,hashlib,pathlib
 root,engine,recipe,data,scene,out=sys.argv[1:]
 assert engine in ('deepinfer','vllm')
 recipe=pathlib.Path(recipe);data=pathlib.Path(data)/'b300-paired-text-v1'
-g=json.loads((pathlib.Path(root)/'configs/gates.example.json').read_text())
+g={'resource_authorized':False,'recipe_approved':False,'G0':False,'G1':False,'G2':False,'G3':False,'evidence_directory':'FILL_WITH_REVIEWED_EVIDENCE'}
 g.update(engine=engine,recipe_sha256=hashlib.sha256(recipe.read_bytes()).hexdigest(),G3=False,
   allowed_request_sha256=[hashlib.sha256((data/n).read_bytes()).hexdigest() for n in [scene+'.jsonl','warm-sharegpt.jsonl']],
   warmup_path='/datasets/b300-paired-text-v1/warm-'+scene+'.jsonl',

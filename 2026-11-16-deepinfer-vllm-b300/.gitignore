@@ -1,7 +1,7 @@
+.local/
 __pycache__/
 *.py[cod]
-.env
-configs/b300.env
+*.env
 logs/
 build/
 build-context/
@@ -10,4 +10,3 @@ image-archives/
 *.tar.gz
 *.tar.xz
 *.whl
-results/raw/

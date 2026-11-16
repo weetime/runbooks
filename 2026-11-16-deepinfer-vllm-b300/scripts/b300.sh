@@ -60,7 +60,7 @@ case "${1:-plan}" in
   data)
     host_check; pinned "${AIPERF_IMAGE:?}"
     run "${RT[@]}" run --rm --network none --user 0:0 --entrypoint /bin/sh -v "$DATA_ROOT:/target" "$AIPERF_IMAGE" -ec \
-      'test ! -e /target/b300-source-subset-v1; test ! -e /target/b300-paired-text-v1; test ! -e /target/b300-http-v1; test ! -e /target/model-metadata; cp -a /datasets/. /target/; cd /target/b300-source-subset-v1; sha256sum -c SHA256SUMS' ;;
+      'for name in b300-source-subset-v1 b300-paired-text-v1 b300-http-v1 model-metadata; do test ! -e /target/$name; done; for name in b300-source-subset-v1 b300-paired-text-v1 b300-http-v1 model-metadata; do cp -a /datasets/$name /target/; done; cd /target/b300-source-subset-v1; sha256sum -c SHA256SUMS' ;;
   build)
     host_check; gpu_check; pinned "${BUILD_KIT_IMAGE:?}"
     : "${DI_LOCAL_IMAGE:?Set a new local output image tag}"

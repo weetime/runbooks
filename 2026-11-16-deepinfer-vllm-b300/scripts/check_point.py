@@ -35,6 +35,13 @@ def audit(args):
     require(point["measurement_mode"] == ("instrumented_native_g3" if args.g3 else "native_batch"), "measurement mode mismatch")
     fixed = all(r["ignore_eos"] for r in source)
     require(fixed if args.fixed else all(not r["ignore_eos"] for r in source), "EOS policy differs from requested audit")
+    sentinels = rows(args.point / "quality-sentinels.jsonl")
+    require([r["stage"] for r in sentinels] == ["before", "after"], "missing before/after quality sentinel")
+    require(sentinels[0]["id"] == sentinels[1]["id"], "quality sentinel identity changed")
+    for sentinel in sentinels:
+        require(sentinel["accounting_passed"] is True, "quality sentinel accounting failed")
+        require(sentinel["token_ids"] and all(type(t) is int and t >= 0 for t in sentinel["token_ids"]), "invalid quality sentinel token IDs")
+        require(len(sentinel["token_ids"]) < sentinel["max_tokens"], "quality sentinel exhausted output budget")
     total = 0
     for request, output in zip(source, outputs):
         tokens = output["token_ids"]

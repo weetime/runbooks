@@ -93,6 +93,15 @@ def main():
     window = kwargs["max_model_len"]
     if any(r["actual_isl"] != len(r["prompt_token_ids"]) or r["actual_isl"] + r["max_tokens"] > window for r in rows):
         raise ValueError("token count/window gate failed")
+    sentinel_row = None
+    if not a.probe:
+        sentinel_path = a.requests.parent / "warm-sharegpt.jsonl"
+        if hashlib.sha256(sentinel_path.read_bytes()).hexdigest() not in gates.get("allowed_request_sha256", []):
+            raise ValueError("quality sentinel set absent from gate evidence")
+        sentinel_row = next(json.loads(line) for line in sentinel_path.read_text().splitlines() if line.strip())
+        if (sentinel_row["ignore_eos"] or sentinel_row["actual_isl"] != len(sentinel_row["prompt_token_ids"])
+                or sentinel_row["actual_isl"] + sentinel_row["max_tokens"] > window):
+            raise ValueError("quality sentinel must be a valid, natural-EOS request")
     a.output.mkdir(parents=True, exist_ok=False)
     import torch
     if not torch.cuda.is_available() or any(torch.cuda.get_device_capability(i) != (10, 3) for i in range(torch.cuda.device_count())):
@@ -160,6 +169,30 @@ def main():
             return llm.generate(prompt_token_ids=ids, sampling_params=params, use_tqdm=False)
         return llm.generate(prompts=[{"prompt_token_ids": x} for x in ids], sampling_params=params, use_tqdm=False)
 
+    def quality_sentinel(stage):
+        if a.probe:
+            return
+        result, = generate([sentinel_row])
+        if a.engine == "deepinfer":
+            ids = [int(item.token_id) for item in result]
+            text = llm.get_tokenizer().decode(ids)
+            finish = str(result[-1].finish_reason) if result else "missing"
+        else:
+            if len(result.outputs) != 1:
+                raise ValueError("quality sentinel expects one completion")
+            completion, = result.outputs
+            ids, text, finish = list(completion.token_ids), completion.text, completion.finish_reason
+        accounting_ok = (bool(ids) and all(t >= 0 for t in ids)
+                         and len(ids) < sentinel_row["max_tokens"] and finish not in (None, "", "missing"))
+        with (a.output / "quality-sentinels.jsonl").open("a") as record:
+            record.write(json.dumps({"stage": stage, "id": sentinel_row["id"],
+                "input_tokens": sentinel_row["actual_isl"], "max_tokens": sentinel_row["max_tokens"],
+                "token_ids": ids, "text": text, "finish_reason": finish,
+                "accounting_passed": accounting_ok, "quality": "requires_human_review"}, ensure_ascii=False)+"\n")
+        if not accounting_ok:
+            raise ValueError("quality sentinel empty/invalid/at budget; preserve evidence and stop")
+
+    quality_sentinel("before")
     # Warmup must be a separately frozen set, not measured inputs. Gate evidence
     # records its hash; output and initial startup effects remain separate.
     warm = Path(gates["warmup_path"])
@@ -182,10 +215,12 @@ def main():
         for start in range(0, len(rows), a.batch_size):
             batch = rows[start:start+a.batch_size]
             torch.cuda.synchronize()
+            started_unix = time.time()
             begin = time.perf_counter()
             outputs = generate(batch)
             torch.cuda.synchronize()
             elapsed = time.perf_counter() - begin
+            ended_unix = time.time()
             if len(outputs) != len(batch):
                 raise ValueError("output count mismatch")
             tokens = 0
@@ -216,6 +251,7 @@ def main():
                     "raw_draft_tok_sum":drafted, "raw_accept_tok_sum":accepted}, ensure_ascii=False)+"\n")
                 tokens += len(ids)
             timing.write(json.dumps({"ids":[r["id"] for r in batch], "n":len(batch), "seconds":elapsed,
+                                     "started_unix":started_unix, "ended_unix":ended_unix,
                                      "actual_generated_tokens":tokens})+"\n")
             out.flush(); timing.flush()
             total_tokens += tokens
@@ -231,6 +267,8 @@ def main():
              "output_tokens_per_second_per_gpu":total_tokens/duration/8,
              "ttft":"not_measured", "tpot":"not_measured", "goodput":"not_measured"}
     (a.output / "point.json").write_text(json.dumps(point, indent=2)+"\n")
+    measured_chunks = {key: list(events) for key, events in trace.events.items()}
+    quality_sentinel("after")
     if a.engine == "deepinfer":
         llm.close()
     if a.g3:

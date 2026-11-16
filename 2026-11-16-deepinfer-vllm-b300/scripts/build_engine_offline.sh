@@ -39,4 +39,14 @@ pathlib.Path('/opt/build-provenance/engine-build.json').write_text(json.dumps({
     'note':'Compilation is not model correctness or performance acceptance'
 },indent=2)+'\n')
 PY
+cat > /opt/deepinfer-entrypoint.sh <<'ENTRYPOINT'
+#!/bin/bash
+set -euo pipefail
+export DEEPINFER_ACCELERATOR=nvidia VIRTUAL_ENV=/opt/deepinfer-venv
+export PATH="$VIRTUAL_ENV/bin:/usr/local/cuda/bin:$PATH"
+export PYTHONPATH="/opt/DeepInfer${PYTHONPATH:+:$PYTHONPATH}"
+cd /opt/DeepInfer
+exec "$@"
+ENTRYPOINT
+chmod 755 /opt/deepinfer-entrypoint.sh
 echo DEEPINFER_B300_OFFLINE_COMPILE_COMPLETED

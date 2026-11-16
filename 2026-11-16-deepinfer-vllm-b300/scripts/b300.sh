@@ -4,7 +4,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 if [[ -n "${CONFIG:-}" ]]; then set -a; source "$CONFIG"; set +a; fi
-RUNTIME="${RUNTIME:-nerdctl}"
+RUNTIME="${RUNTIME:-docker}"
 WORK_DIR="${WORK_DIR:-/data/deepinfer-vllm-b300}"
 DATA_ROOT="${DATA_ROOT:-/data/share/models/_datasets}"
 case "$RUNTIME" in
@@ -44,16 +44,10 @@ new_dir() { if [[ "${DRY_RUN:-0}" != 1 ]]; then test ! -e "$1"; mkdir -p "$1"; f
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 case "${1:-plan}" in
   plan)
-    printf '%s\n' '1 pull/load  2 data/check  3 build  4 freeze-model/smoke  5 publish/export  6 gates/probe  7 g3  8 bench'
-    printf '%s\n' 'DeepInfer build runs on B300 with --network none. GPU_IDS is never defaulted to all.' ;;
-  prepare)
-    host_check; : "${BUILD_CONTEXT:?Choose a new directory on the ONLINE preparation machine}" "${BUILD_KIT_TAG:?Choose a new build-kit image tag}"
-    run bash "$ROOT/scripts/prepare_build_context.sh" "$BUILD_CONTEXT"
-    run "${RT[@]}" build --platform linux/amd64 -t "$BUILD_KIT_TAG" "$BUILD_CONTEXT"
-    echo 'Publish the kit, verify its manifest digest, and set BUILD_KIT_IMAGE before the B300 build stage.' ;;
+    printf '%s\n' 'Execution plan and test commands: https://github.com/weetime/runbooks/issues/1' ;;
   pull)
     host_check
-    for image in "${BUILD_KIT_IMAGE:?}" "${VLLM_IMAGE:?}" "${DATA_IMAGE:?}"; do pinned "$image"; run "${RT[@]}" pull "$image"; done ;;
+    for image in "${VLLM_IMAGE:?}" "${AIPERF_IMAGE:?}"; do pinned "$image"; run "${RT[@]}" pull "$image"; done ;;
   load)
     host_check
     : "${ARCHIVE_DIR:?Directory containing image archives and SHA256SUMS}"
@@ -64,8 +58,8 @@ case "${1:-plan}" in
     for f in "${archives[@]}"; do run "${RT[@]}" load -i "$f"; done ;;
   check) host_check; gpu_check ;;
   data)
-    host_check; pinned "${DATA_IMAGE:?}"
-    run "${RT[@]}" run --rm --network none -v "$DATA_ROOT:/target" "$DATA_IMAGE" sh -ec \
+    host_check; pinned "${AIPERF_IMAGE:?}"
+    run "${RT[@]}" run --rm --network none --user 0:0 --entrypoint /bin/sh -v "$DATA_ROOT:/target" "$AIPERF_IMAGE" -ec \
       'test ! -e /target/b300-source-subset-v1; test ! -e /target/b300-paired-text-v1; test ! -e /target/b300-http-v1; test ! -e /target/model-metadata; cp -a /datasets/. /target/; cd /target/b300-source-subset-v1; sha256sum -c SHA256SUMS' ;;
   build)
     host_check; gpu_check; pinned "${BUILD_KIT_IMAGE:?}"
@@ -97,7 +91,7 @@ case "${1:-plan}" in
     [[ "${DRY_RUN:-0}" == 1 || -s "$MODEL_MANIFEST" ]] || { echo 'Missing model manifest' >&2; exit 2; }
     out="$WORK_DIR/smoke-$stamp"; new_dir "$out"
     cmd=("${RT[@]}" run --name "deepinfer-b300-smoke-$stamp" --network none --gpus "\"device=$GPU_IDS\"" -e "NVIDIA_VISIBLE_DEVICES=$GPU_IDS"
-      --ipc host --ulimit memlock=-1:-1 -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1
+      --ipc host --ulimit memlock=-1:-1 --ulimit stack=67108864:67108864 -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1
       -v "$MODEL_DIR:/models/DeepSeek-V4.1-Flash-1017:ro" "$DI_LOCAL_IMAGE"
       python examples/offline_inference.py --ep 8 --cp 8 --dp 1
       --model_name /models/DeepSeek-V4.1-Flash-1017 --check_structured_output)
@@ -151,12 +145,12 @@ PY
     if [[ "$mode" == g3 ]]; then args+=(--g3); fi
     if [[ "$mode" == probe ]]; then args+=(--probe); fi
     if [[ "$ENGINE" == vllm ]]; then args=(-c 'exec "$@"' bash "${args[@]}"); fi
-    cmd=("${RT[@]}" run --name "bench-$POINT_ID" --network none --gpus "\"device=$GPU_IDS\"" --ipc host
+    cmd=("${RT[@]}" run --name "bench-$POINT_ID" --network none --gpus "\"device=$GPU_IDS\"" --ipc host --ulimit memlock=-1:-1 --ulimit stack=67108864:67108864
       -e "NVIDIA_VISIBLE_DEVICES=$GPU_IDS" -e "BENCH_IMAGE_MANIFEST_REF=$image"
       -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1
       -v "$ROOT:/benchkit:ro" -v "$MODEL_DIR:/models/DeepSeek-V4.1-Flash-1017:ro"
       -v "$DATA_ROOT:/datasets:ro" -v "$GATES_FILE:/gates.json:ro" -v "$RECIPE_FILE:/recipe.json:ro"
       -v "$out:/results" "${entry[@]}" "$image" "${args[@]}")
     if [[ "${DRY_RUN:-0}" == 1 ]]; then run "${cmd[@]}"; else "${cmd[@]}" 2>&1 | tee "$out/client.log"; fi ;;
-  *) echo 'Usage: b300.sh plan|prepare|pull|load|check|data|build|freeze-model|smoke|publish|export|gates|probe|g3|bench' >&2; exit 2 ;;
+  *) echo 'Usage: b300.sh plan|pull|load|check|data|build|freeze-model|smoke|publish|export|gates|probe|g3|bench' >&2; exit 2 ;;
 esac

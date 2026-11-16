@@ -1,0 +1,11 @@
+{
+  "version": "b300-text-offline-v1",
+  "files": 50,
+  "bytes": 32306716,
+  "sha256": "08409fa6d2345a622403d76fbd2cde58c495e142f890044a407d8f923f4bdcaa",
+  "source_subset_manifest_sha256": "67a8678f69b298b9dd8ce7a28d679b1bb23e084a0437c022bc3767fa416273d8",
+  "upstream_full_manifest_sha256": "a49ef30dab14921a7b1cc804c847f65f721cf44aa5d59eddc47561b868e2f602",
+  "contains_full_standard_v1": false,
+  "contains_weights": false,
+  "contains_cc_agent_corpora": false
+}

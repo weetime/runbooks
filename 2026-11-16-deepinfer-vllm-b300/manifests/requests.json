@@ -1,0 +1,186 @@
+{
+  "schema": 1,
+  "kind": "b300-paired-text-v1",
+  "status": "prepared_not_engine_validated",
+  "source_catalog_sha256": "a49ef30dab14921a7b1cc804c847f65f721cf44aa5d59eddc47561b868e2f602",
+  "encoder_sha256": "13231c592e958fb39e2af6001dae69d90e7a36b265702b9b390236fb387599e2",
+  "tokenizer_sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "seed": 0
+  },
+  "thinking_mode": "thinking",
+  "reasoning_effort": 75,
+  "note": "Historical messages reused; sampling is NEW, not historical A100 performance.",
+  "files": {
+    "s1k.jsonl": {
+      "sha256": "71049ae092faf354a16091408f691d23a0e6ba382fcbd9787a35924df34187f3",
+      "source": "historical-a100-20261031/s1k-e75.jsonl",
+      "source_sha256": "3eb2e0720066ae7d1fb71f29f3a1d998f1d23c117b3883b8133a43ff0e5e208f",
+      "n": 128,
+      "isl_min": 1014,
+      "isl_max": 1028,
+      "max_tokens": [
+        256
+      ],
+      "max_input_plus_budget": 1284
+    },
+    "s8k.jsonl": {
+      "sha256": "f16100634ef1ce73e00bf88760ee84e388927476e0cb7bc299d3e11389e14b9f",
+      "source": "historical-a100-20261031/s8k-e75.jsonl",
+      "source_sha256": "ef4b00e10a02491329a830bd3174f0b9ccae22f7515dd0e52b2c50777e86fcb4",
+      "n": 128,
+      "isl_min": 8234,
+      "isl_max": 8261,
+      "max_tokens": [
+        512
+      ],
+      "max_input_plus_budget": 8773
+    },
+    "s32k.jsonl": {
+      "sha256": "e50a23c433bc34a7f67e70d85989183b3fa09c5aacf6210d9ca84423635dab35",
+      "source": "historical-a100-20261031/s32k-e75.jsonl",
+      "source_sha256": "a39e748de5e5c4797cdc552a3f9614283d85508d8881e628e5ab24492a6a06a8",
+      "n": 128,
+      "isl_min": 32700,
+      "isl_max": 32726,
+      "max_tokens": [
+        512
+      ],
+      "max_input_plus_budget": 33238
+    },
+    "s128k.jsonl": {
+      "sha256": "015baa9c2b8b31f2674c3b81b770b680994f3e7f50fb01fb985b957957275682",
+      "source": "historical-a100-20261031/s128k-e75.jsonl",
+      "source_sha256": "fd67d413db613220a174565986802feea01a0ab12454629678ec42287cbbf461",
+      "n": 128,
+      "isl_min": 130828,
+      "isl_max": 130866,
+      "max_tokens": [
+        512
+      ],
+      "max_input_plus_budget": 131378
+    },
+    "longout.jsonl": {
+      "sha256": "84e6f851c9ae424365189ba0f5cf92365ef43acbf8d08be4db8f942292317d4a",
+      "source": "historical-a100-20261031/slongout-e75.jsonl",
+      "source_sha256": "22b9d12610a96140d47445a78ac073c302269416e868a03c14d676aa18bce9d9",
+      "n": 128,
+      "isl_min": 8234,
+      "isl_max": 8261,
+      "max_tokens": [
+        2048
+      ],
+      "max_input_plus_budget": 10309
+    },
+    "sharegpt.jsonl": {
+      "sha256": "1a194b6300f60d1a7b5ec723b7191157267338ac6cd41e0c281c81ba8fe06b10",
+      "source": "historical-a100-20261031/sharegpt-natural-e75-16384.jsonl",
+      "source_sha256": "61411c23820ec8e8bdb8ac9ff2b2d6c53d366e3405f54d0bc8531c8782af552f",
+      "n": 128,
+      "isl_min": 2052,
+      "isl_max": 7960,
+      "max_tokens": [
+        16384
+      ],
+      "max_input_plus_budget": 24344
+    },
+    "rag.jsonl": {
+      "sha256": "a1d1ea7d8a3edde423c2d5884e338f663130081ea9d304847c67b445d196a6d3",
+      "source": "historical-a100-20261031/rag-natural-e75.jsonl",
+      "source_sha256": "c3114c1b0f86a7a1a5d68f3cc783a6e77f00945767067cf275da9595d0935944",
+      "n": 128,
+      "isl_min": 8221,
+      "isl_max": 16346,
+      "max_tokens": [
+        4096
+      ],
+      "max_input_plus_budget": 20442
+    },
+    "warm-s1k.jsonl": {
+      "sha256": "20552dbd366a78705736bc1f0c96fd60cc2446d07561fb8b34904553656536fd",
+      "source": "historical-a100-20261031/warm-s1k-e75.jsonl",
+      "source_sha256": "0fffb2d51b2bb63803fce7e0cff04cd76a48a33e7dffd1c527b49314ae48b3ba",
+      "n": 3,
+      "isl_min": 1026,
+      "isl_max": 1033,
+      "max_tokens": [
+        256
+      ],
+      "max_input_plus_budget": 1289
+    },
+    "warm-s8k.jsonl": {
+      "sha256": "19308f5c3c699737e239f0467067ee71aea7324a865906f44490e91dce312bad",
+      "source": "historical-a100-20261031/warm-s8k-c1-e75.jsonl",
+      "source_sha256": "31fe6649d445e2472d973bbac52b075dcc7b6763258a653508129c568202ccb1",
+      "n": 3,
+      "isl_min": 8252,
+      "isl_max": 8267,
+      "max_tokens": [
+        512
+      ],
+      "max_input_plus_budget": 8779
+    },
+    "warm-s32k.jsonl": {
+      "sha256": "93131c7cd1c0284a849ffb44ea60026d228426fe24d4f107e696e9cfae644580",
+      "source": "historical-a100-20261031/warm-s32k-c1-e75.jsonl",
+      "source_sha256": "c964727a5c4e0e320125e5b10e17b3f9a5de2fd1ca1aa87895a7e363caa51fc7",
+      "n": 3,
+      "isl_min": 32719,
+      "isl_max": 32732,
+      "max_tokens": [
+        512
+      ],
+      "max_input_plus_budget": 33244
+    },
+    "warm-s128k.jsonl": {
+      "sha256": "b27b68e9b377d31e4490e532e139cfe25bfa4e52332fad0b3eccfe0a3ebf7920",
+      "source": "historical-a100-20261031/warm-s128k-c1-e75.jsonl",
+      "source_sha256": "0529159e5c1fe31e4fa760c6c1d36fdd944c1953ba5783ee401d287e2116a91c",
+      "n": 3,
+      "isl_min": 130861,
+      "isl_max": 130869,
+      "max_tokens": [
+        512
+      ],
+      "max_input_plus_budget": 131381
+    },
+    "warm-longout.jsonl": {
+      "sha256": "eb99c486d0ae77b99b5d9cce47ee3097b955ffc8b2542b2a32e93bdb61ef8dce",
+      "source": "historical-a100-20261031/warm-slongout-c1-e75.jsonl",
+      "source_sha256": "b93840fa00766b3099fe1aef45307a8a61858b5a2d79e368ae3fda623b5ec8d5",
+      "n": 3,
+      "isl_min": 8252,
+      "isl_max": 8267,
+      "max_tokens": [
+        2048
+      ],
+      "max_input_plus_budget": 10315
+    },
+    "warm-sharegpt.jsonl": {
+      "sha256": "7f6833a9b571eb72ba9e3e242268009d693b7fd9626050a3677723edc111e7a0",
+      "source": "historical-a100-20261031/warm-sharegpt-natural-c1-e75-16384.jsonl",
+      "source_sha256": "ce752cc1651edfc9b84f3535eff3ff50586ffdabafa72d5c902d62ea52902aa3",
+      "n": 3,
+      "isl_min": 2205,
+      "isl_max": 2736,
+      "max_tokens": [
+        16384
+      ],
+      "max_input_plus_budget": 19120
+    },
+    "warm-rag.jsonl": {
+      "sha256": "e60d5e9d81e09983673e2d6feab33dc4330cdbc4b605a60a1b65afbe607d8cc2",
+      "source": "historical-a100-20261031/warm-rag-natural-c1-e75.jsonl",
+      "source_sha256": "9e0c1fc8d498aea4589240d64f66d565fbfcbb82a06d5eb5b70a1a1aa8300b7b",
+      "n": 3,
+      "isl_min": 10864,
+      "isl_max": 14731,
+      "max_tokens": [
+        4096
+      ],
+      "max_input_plus_budget": 18827
+    }
+  }
+}

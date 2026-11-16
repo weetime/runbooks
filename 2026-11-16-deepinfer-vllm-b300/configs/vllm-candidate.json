@@ -1,0 +1,23 @@
+{
+  "engine": "vllm",
+  "status": "candidate_not_approved_not_gpu_validated",
+  "env": {},
+  "engine_kwargs": {
+    "model": "/models/DeepSeek-V4.1-Flash-1017",
+    "max_model_len": 262144,
+    "max_num_seqs": 128,
+    "max_num_batched_tokens": 32768,
+    "gpu_memory_utilization": 0.85,
+    "trust_remote_code": true,
+    "seed": 0,
+    "tensor_parallel_size": 8,
+    "tokenizer_mode": "deepseek_v41",
+    "speculative_config": {
+      "method": "dspark",
+      "num_speculative_tokens": 5,
+      "draft_sample_method": "probabilistic",
+      "rejection_sample_method": "block",
+      "enable_adaptive_verification": true
+    }
+  }
+}
